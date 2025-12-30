@@ -1,4 +1,8 @@
-name: Playwright Tests
+name: pw
+run-name: >
+  ${{ github.workflow }} :: run #${{ github.run_number }} ::
+  ${{ vars.ENV_NAME }} ::
+  ${{ vars.PROJECT_NAME }}
 
 on:
   push:
@@ -22,6 +26,9 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:v1.57.0-jammy
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -65,3 +72,14 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Print report URL
+        run: |
+          echo "### 📊 Playwright Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "🔗 **Report URL:** ${{ steps.deployment.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
+          echo ""
+          echo "=========================================="
+          echo "📊 Playwright Report URL:"
+          echo "${{ steps.deployment.outputs.page_url }}"
+          echo "=========================================="
