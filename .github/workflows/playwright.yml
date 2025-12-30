@@ -1,8 +1,6 @@
 name: pw
 run-name: >
-  ${{ github.workflow }} :: run #${{ github.run_number }} ::
-  ${{ vars.ENV_NAME }} ::
-  ${{ vars.PROJECT_NAME }}
+  ${{ github.workflow }} :: run #${{ github.run_number }}
 
 on:
   push:
