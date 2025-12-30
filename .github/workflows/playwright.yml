@@ -70,14 +70,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
-      - name: Print report URL
-        run: |
-          echo "### 📊 Playwright Report" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "🔗 **Report URL:** ${{ steps.deployment.outputs.page_url }}" >> $GITHUB_STEP_SUMMARY
-          echo ""
-          echo "=========================================="
-          echo "📊 Playwright Report URL:"
-          echo "${{ steps.deployment.outputs.page_url }}"
-          echo "=========================================="
