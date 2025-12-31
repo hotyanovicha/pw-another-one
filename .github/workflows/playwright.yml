@@ -1,6 +1,6 @@
 name: pw
 run-name: >
-  ${{ github.workflow }} :: run #${{ github.run_number }} :: ${{ inputs.project }} :: ${{ inputs.priority }}
+  ${{ github.workflow }} :: run #${{ github.run_number }} :: ${{ inputs.project || 'chromium' }} :: ${{ inputs.priority || 'all' }}
 on:
   push:
     branches: [main]
