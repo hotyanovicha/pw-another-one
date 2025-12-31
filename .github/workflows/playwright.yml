@@ -1,14 +1,13 @@
 name: pw
 run-name: >
-  ${{ github.workflow }} :: run #${{ github.run_number }}
-
+  ${{ github.workflow }} :: run #${{ github.run_number }} :: ${inputs.project} :: ${inputs.priority}
 on:
   push:
     branches: [main]
   workflow_dispatch:
     inputs:
       project:
-        description: 'Project to run'
+        description: 'Project'
         required: false
         default: 'chrome'
         type: choice
@@ -16,7 +15,7 @@ on:
           - chrome
           - all
       priority:
-        description: 'Priority level'
+        description: 'Priority'
         required: false
         default: 'all'
         type: choice
@@ -67,33 +66,33 @@ jobs:
 
       - name: Run Playwright tests
         run: |
-          PROJECT_FLAG=""
-          GREP_FLAG=""
+          TEST_ARGS=""
 
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             # Set project flag
             if [ "${{ inputs.project }}" != "all" ]; then
-              PROJECT_FLAG="--project=${{ inputs.project }}"
+              TEST_ARGS="$TEST_ARGS --project=${{ inputs.project }}"
             fi
 
             # Set grep flag based on priority
             case "${{ inputs.priority }}" in
               "P1")
-                GREP_FLAG="--grep @P1"
+                TEST_ARGS="$TEST_ARGS --grep @P1"
                 ;;
               "P1-P2")
-                GREP_FLAG="--grep @P1|@P2"
+                TEST_ARGS="$TEST_ARGS --grep @P1|@P2"
                 ;;
               "P1-P3")
-                GREP_FLAG="--grep @P1|@P2|@P3"
-                ;;
-              "all")
-                GREP_FLAG=""
+                TEST_ARGS="$TEST_ARGS --grep @P1|@P2|@P3"
                 ;;
             esac
           fi
 
-          pnpm test $PROJECT_FLAG $GREP_FLAG
+          if [ -n "$TEST_ARGS" ]; then
+            pnpm test -- $TEST_ARGS
+          else
+            pnpm test
+          fi
         env:
           CI: true
           BASE_URL: ${{ vars.BASE_URL }}
