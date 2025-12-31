@@ -9,10 +9,10 @@ on:
       project:
         description: 'Project'
         required: false
-        default: 'chrome'
+        default: 'chromium'
         type: choice
         options:
-          - chrome
+          - chromium
           - all
       priority:
         description: 'Priority'
@@ -38,6 +38,9 @@ jobs:
   run-tests:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     container:
       image: mcr.microsoft.com/playwright:v1.57.0-jammy
     steps:
@@ -69,9 +72,9 @@ jobs:
           TEST_ARGS=""
 
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            # Set project flag (chrome by default, or all non-setup projects)
+            # Set project flag (chromium by default, or all non-setup projects)
             if [ "${{ inputs.project }}" = "all" ]; then
-              TEST_ARGS="--project=chrome"
+              TEST_ARGS="--project=chromium"
             else
               TEST_ARGS="--project=${{ inputs.project }}"
             fi
@@ -89,8 +92,8 @@ jobs:
                 ;;
             esac
           else
-            # Default to chrome project for push events
-            TEST_ARGS="--project=chrome"
+            # Default to chromium project for push events
+            TEST_ARGS="--project=chromium"
           fi
 
           pnpm exec playwright test $TEST_ARGS
