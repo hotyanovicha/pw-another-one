@@ -7,6 +7,7 @@ const ENV = process.env.ENV_NAME || 'dev';
 dotenvExpand.expand(
 	dotenv.config({
 		path: `env/env.${ENV}`,
+		quiet: true,
 	})
 );
 
@@ -16,7 +17,7 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 5 : undefined,
   reporter: 'html',
   use: {
     baseURL: process.env.BASE_URL,
@@ -27,8 +28,13 @@ export default defineConfig({
 
   projects: [
     {
+      name: 'setup',
+      testMatch: /.*\.setup\.ts/,
+    },
+    {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
-    }
+      dependencies: ['setup'],
+    },
   ],
 });

@@ -29,6 +29,7 @@ build/
 /blob-report/
 /playwright/.cache/
 /tests-tmp/
+/.auth/
 
 # Logs
 logs/

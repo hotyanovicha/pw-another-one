@@ -1,13 +1,29 @@
 name: pw
 run-name: >
-  ${{ github.workflow }} :: run #${{ github.run_number }}
-
+  ${{ github.workflow }} :: run #${{ github.run_number }} :: ${{ inputs.project }} :: ${{ inputs.priority }}
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
+    inputs:
+      project:
+        description: 'Project'
+        required: false
+        default: 'chromium'
+        type: choice
+        options:
+          - chromium
+          - all
+      priority:
+        description: 'Priority'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - P1
+          - P1-P2
+          - P1-P3
+          - all
 
 permissions:
   contents: read
@@ -19,14 +35,14 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
+  run-tests:
     timeout-minutes: 60
     runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/playwright:v1.57.0-jammy
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    container:
+      image: mcr.microsoft.com/playwright:v1.57.0-jammy
     steps:
       - uses: actions/checkout@v4
 
@@ -52,7 +68,35 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run Playwright tests
-        run: pnpm test
+        run: |
+          TEST_ARGS=""
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            # Set project flag (chromium by default, or all non-setup projects)
+            if [ "${{ inputs.project }}" = "all" ]; then
+              TEST_ARGS="--project=chromium"
+            else
+              TEST_ARGS="--project=${{ inputs.project }}"
+            fi
+
+            # Set grep flag based on priority
+            case "${{ inputs.priority }}" in
+              "P1")
+                TEST_ARGS="$TEST_ARGS --grep @P1"
+                ;;
+              "P1-P2")
+                TEST_ARGS="$TEST_ARGS --grep @P1|@P2"
+                ;;
+              "P1-P3")
+                TEST_ARGS="$TEST_ARGS --grep @P1|@P2|@P3"
+                ;;
+            esac
+          else
+            # Default to chromium project for push events
+            TEST_ARGS="--project=chromium"
+          fi
+
+          pnpm exec playwright test $TEST_ARGS
         env:
           CI: true
           BASE_URL: ${{ vars.BASE_URL }}
