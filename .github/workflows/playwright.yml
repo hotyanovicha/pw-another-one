@@ -1,6 +1,6 @@
 name: pw
 run-name: >
-  ${{ github.workflow }} :: run #${{ github.run_number }} :: ${inputs.project} :: ${inputs.priority}
+  ${{ github.workflow }} :: run #${{ github.run_number }} :: ${{ inputs.project }} :: ${{ inputs.priority }}
 on:
   push:
     branches: [main]
@@ -66,7 +66,7 @@ jobs:
 
       - name: Run Playwright tests
         run: |
-          TEST_ARGS=""
+          TEST_ARGS="--project=!setup"
 
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             # Set project flag
@@ -86,13 +86,12 @@ jobs:
                 TEST_ARGS="$TEST_ARGS --grep @P1|@P2|@P3"
                 ;;
             esac
+          else
+            # Default to chrome project for push events
+            TEST_ARGS="$TEST_ARGS --project=chrome"
           fi
 
-          if [ -n "$TEST_ARGS" ]; then
-            pnpm test -- $TEST_ARGS
-          else
-            pnpm test
-          fi
+          pnpm test -- $TEST_ARGS
         env:
           CI: true
           BASE_URL: ${{ vars.BASE_URL }}
