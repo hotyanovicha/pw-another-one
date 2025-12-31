@@ -7,6 +7,7 @@ const ENV = process.env.ENV_NAME || 'dev';
 dotenvExpand.expand(
 	dotenv.config({
 		path: `env/env.${ENV}`,
+		quiet: true,
 	})
 );
 
@@ -27,8 +28,13 @@ export default defineConfig({
 
   projects: [
     {
+      name: 'setup',
+      testMatch: /.*\.setup\.ts/,
+    },
+    {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
-    }
+      dependencies: ['setup'],
+    },
   ],
 });
