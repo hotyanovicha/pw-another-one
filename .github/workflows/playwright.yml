@@ -35,7 +35,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
+  run-tests:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     container:
@@ -66,12 +66,14 @@ jobs:
 
       - name: Run Playwright tests
         run: |
-          TEST_ARGS="--project=!setup"
+          TEST_ARGS=""
 
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            # Set project flag
-            if [ "${{ inputs.project }}" != "all" ]; then
-              TEST_ARGS="$TEST_ARGS --project=${{ inputs.project }}"
+            # Set project flag (chrome by default, or all non-setup projects)
+            if [ "${{ inputs.project }}" = "all" ]; then
+              TEST_ARGS="--project=chrome"
+            else
+              TEST_ARGS="--project=${{ inputs.project }}"
             fi
 
             # Set grep flag based on priority
@@ -88,10 +90,10 @@ jobs:
             esac
           else
             # Default to chrome project for push events
-            TEST_ARGS="$TEST_ARGS --project=chrome"
+            TEST_ARGS="--project=chrome"
           fi
 
-          pnpm test -- $TEST_ARGS
+          pnpm exec playwright test $TEST_ARGS
         env:
           CI: true
           BASE_URL: ${{ vars.BASE_URL }}
