@@ -3,7 +3,7 @@ import { PageManager } from '../../src/ui/pages/page-manager';
 import { createPerson, Person } from '../../src/utils/person.factory';
 
 
-test('TC01: User Registration with complete profile', { tag: '@P1' }, async ({ pages }: { pages: PageManager }) => {
+test('Authentication: User Registration with complete profile', { tag: '@P1' }, async ({ pages }: { pages: PageManager }) => {
     const user = createPerson();
 
     await pages.home.open();
@@ -28,7 +28,7 @@ test('TC01: User Registration with complete profile', { tag: '@P1' }, async ({ p
 });
 
 
-test('TC02: Login with Registered User', { tag: '@P1' }, async ({pages, newUser}: {pages: PageManager, newUser: Person}) => {
+test('Authentication: Login with Registered User', { tag: '@P1' }, async ({pages, newUser}: {pages: PageManager, newUser: Person}) => {
     await pages.home.open();
     await pages.consentDialog.acceptIfVisible();
     await pages.home.clickSignupLoginLink();

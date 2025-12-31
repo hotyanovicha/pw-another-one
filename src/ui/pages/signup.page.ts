@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { BasePage } from './base.page';
 import { Person } from '../../utils/person.factory';
+import { step } from '../../utils/step.decorator';
 
 export class SignupPage extends BasePage {
     protected readonly uniqueElement = this.page.locator('.login-form');
@@ -23,12 +24,14 @@ export class SignupPage extends BasePage {
     private readonly mobile = this.page.locator('#mobile_number');
     private readonly createAccountButton = this.page.getByRole('button', { name: 'Create Account' });
 
+    @step()
     async isLoaded(): Promise<this> {
         await super.isLoaded();
         await expect.soft(this.uniqueElement.getByRole('heading', { name: 'Enter Account Information' })).toBeVisible();
         return this;
     }
 
+    @step()
     async fillForm(user: Person): Promise<void> {
         await this.page.getByRole('radio', { name: user.title }).click();
         await this.name.fill(user.name);
@@ -50,6 +53,7 @@ export class SignupPage extends BasePage {
         await this.mobile.fill(user.mobile);
     }
 
+    @step()
     async clickCreateAccountButton(): Promise<void> {
         await this.createAccountButton.click();
     }
