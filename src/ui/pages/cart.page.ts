@@ -25,9 +25,11 @@ export class CartPage extends BasePage {
 			const uiQty = await this.getRowQuantity(row);
 			const uiLineTotal = await this.getRowLineTotal(row);
 
-			expect(uiPrice).toBe(item.price);
-			expect(uiQty).toBe(item.quantity);
-			expect(uiLineTotal).toBe(item.price * item.quantity);
+			expect.soft(uiPrice, { message: `Price for "${item.name}" should be ${item.price}` }).toBe(item.price);
+			expect.soft(uiQty, { message: `Quantity for "${item.name}" should be ${item.quantity}` }).toBe(item.quantity);
+			expect
+				.soft(uiLineTotal, { message: `Line total for "${item.name}" should be ${item.price * item.quantity}` })
+				.toBe(item.price * item.quantity);
 		}
 	}
 
