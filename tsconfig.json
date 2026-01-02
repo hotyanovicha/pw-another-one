@@ -13,6 +13,7 @@
     "noEmit": true,
     "moduleResolution": "node",
     "baseUrl": ".",
+    "experimentalDecorators": false,
     "paths": {
       "@/utils/*": ["src/utils/*"],
       "@/ui/pages/*": ["src/ui/pages/*"],

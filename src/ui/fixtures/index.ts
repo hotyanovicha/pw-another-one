@@ -30,6 +30,7 @@ export const test = base.extend<Fixtures>({
 		const pages = new PageManager(page);
 
 		await pages.home.open();
+		await pages.home.isLoaded();
 		await pages.consentDialog.acceptIfVisible();
 		await pages.home.clickSignupLoginLink();
 		await pages.loginSignupPage.isLoaded();

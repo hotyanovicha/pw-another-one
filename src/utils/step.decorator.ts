@@ -1,22 +1,16 @@
 import { test } from '@playwright/test';
 
-type AnyFunction = (...args: any[]) => any;
+type AnyFunction = (this: any, ...args: any[]) => any;
 
 export function step(stepName?: string) {
-	return function decorator<T extends AnyFunction>(target: T, context: ClassMethodDecoratorContext): T {
+	return function <T extends AnyFunction>(originalMethod: T, context: ClassMethodDecoratorContext<any, T>): T {
 		const methodName = String(context.name);
 
-		async function replacementMethod(this: any, ...args: any[]): Promise<ReturnType<T>> {
-			const name = stepName || `${this.constructor.name}.${methodName}`;
-			return (await test.step(
-				name,
-				async () => {
-					return await target.apply(this, args);
-				},
-				{ box: true }
-			)) as ReturnType<T>;
+		function replacement(this: any, ...args: Parameters<T>): ReturnType<T> {
+			const name = stepName ?? `${this.constructor?.name ?? 'Object'}.${methodName}`;
+			return (await test.step(name, () => originalMethod.apply(this, args), { box: true })) as ReturnType<T>;
 		}
 
-		return replacementMethod as T;
+		return replacement as T;
 	};
 }
