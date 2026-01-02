@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { pickRandomElement } from '../utils/random';
+import { pickRandomElement } from '@/utils/random';
 
 export const GENDER_TITLES = ['Mr.', 'Mrs.'] as const;
 export type GenderTitle = typeof GENDER_TITLES[number];

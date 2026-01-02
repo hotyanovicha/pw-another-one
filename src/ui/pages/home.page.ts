@@ -1,5 +1,5 @@
-import { BasePage } from './base.page';
-import { step } from '../../utils/step.decorator';
+import { BasePage } from '@/ui/pages/base.page';
+import { step } from '@/utils/step.decorator';
 
 export class HomePage extends BasePage {
   protected readonly uniqueElement = this.page.locator('.logo');

@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { step } from '../../utils/step.decorator';
+import { step } from '@/utils/step.decorator';
 
 export class ConsentDialog {
   private readonly button = this.page.getByRole('button', { name: 'Consent' });

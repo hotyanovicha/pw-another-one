@@ -1,10 +1,10 @@
 import { Page } from '@playwright/test';
-import { HomePage } from './home.page';
-import { LoginSignupPage } from './login-signup.page';
-import { SignupPage } from './signup.page';
-import { AccountCreatedPage } from './account-created.page';
-import { ConsentDialog } from './consent-dialog.component';
-import { HeaderComponent } from './header.component';
+import { HomePage } from '@/ui/pages/home.page';
+import { LoginSignupPage } from '@/ui/pages/login-signup.page';
+import { SignupPage } from '@/ui/pages/signup.page';
+import { AccountCreatedPage } from '@/ui/pages/account-created.page';
+import { ConsentDialog } from '@/ui/pages/consent-dialog.component';
+import { HeaderComponent } from '@/ui/pages/header.component';
 
 
 export class PageManager {

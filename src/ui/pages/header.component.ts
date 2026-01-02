@@ -1,5 +1,5 @@
 import { expect, Page } from '@playwright/test';
-import { step } from '../../utils/step.decorator';
+import { step } from '@/utils/step.decorator';
 
 export class HeaderComponent {
   private readonly homeLink = this.page.getByRole('link', { name: 'Home' });
