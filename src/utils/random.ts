@@ -1,3 +1,3 @@
 export function pickRandomElement<T>(array: readonly T[]): T {
-    return array[Math.floor(Math.random() * array.length)];
+	return array[Math.floor(Math.random() * array.length)];
 }
