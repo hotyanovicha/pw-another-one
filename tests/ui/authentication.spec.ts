@@ -1,4 +1,4 @@
-import { test } from '@/ui/fixtures';
+import { test } from '@/ui/fixtures/index';
 import { PageManager } from '@/ui/pages/page-manager'
 import { createPerson, Person } from '@/utils/person.factory';
 
