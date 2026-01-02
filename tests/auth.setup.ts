@@ -1,6 +1,6 @@
 import { test as setup } from '@playwright/test';
-import { PageManager } from '../src/ui/pages/page-manager';
-import { getUserByIndex } from '../src/utils/users';
+import { PageManager } from '@/ui/pages/page-manager';
+import { getUserByIndex } from '@/utils/users';
 
 setup('authenticate', async ({ page }, testInfo) => {
   const user = getUserByIndex(testInfo.parallelIndex);

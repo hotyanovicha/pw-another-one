@@ -1,5 +1,5 @@
 import { Page, Locator, expect } from '@playwright/test';
-import { step } from '../../utils/step.decorator';
+import { step } from '@/utils/step.decorator';
 
 export abstract class BasePage {
   protected abstract readonly uniqueElement: Locator;

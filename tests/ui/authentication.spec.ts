@@ -1,6 +1,6 @@
-import { test } from '../../src/ui/fixtures';
-import { PageManager } from '../../src/ui/pages/page-manager';
-import { createPerson, Person } from '../../src/utils/person.factory';
+import { test } from '@/ui/fixtures';
+import { PageManager } from '@/ui/pages/page-manager'
+import { createPerson, Person } from '@/utils/person.factory';
 
 
 test('Authentication: User Registration with complete profile', { tag: '@P1' }, async ({ pages }: { pages: PageManager }) => {

@@ -11,8 +11,15 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "@/utils/*": ["src/utils/*"],
+      "@/ui/pages/*": ["src/ui/pages/*"],
+      "@/ui/fixtures/*": ["src/ui/fixtures/*"],
+      "@/ui/test-data/*": ["src/ui/test-data/*"]
+    }
   },
-  "include": ["tests/**/*.ts", "playwright.config.ts"],
+  "include": ["tests/**/*.ts", "playwright.config.ts", "src/**/*.ts"],
   "exclude": ["node_modules"]
 }

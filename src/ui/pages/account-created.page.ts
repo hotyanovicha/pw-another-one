@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
-import { BasePage } from './base.page';
-import { step } from '../../utils/step.decorator';  
+import { BasePage } from '@/ui/pages/base.page';
+import { step } from '@/utils/step.decorator';  
 
 export class AccountCreatedPage extends BasePage {
     protected readonly uniqueElement = this.page.locator('[data-qa="account-created"]');
