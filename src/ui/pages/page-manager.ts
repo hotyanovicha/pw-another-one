@@ -5,6 +5,8 @@ import { SignupPage } from '@/ui/pages/signup.page';
 import { AccountCreatedPage } from '@/ui/pages/account-created.page';
 import { ConsentDialog } from '@/ui/pages/consent-dialog.component';
 import { HeaderComponent } from '@/ui/pages/header.component';
+import { ProductsPage } from '@/ui/pages/products.page';
+import { ProductPage } from '@/ui/pages/product.page';
 
 
 export class PageManager {
@@ -14,6 +16,8 @@ export class PageManager {
     private _accountCreatedPage?: AccountCreatedPage;
     private _consentDialog?: ConsentDialog;
     private _header?: HeaderComponent;
+    private _products?: ProductsPage;
+    private _product?: ProductPage;
     constructor(private page: Page) {}
 
   get home(): HomePage {
@@ -33,5 +37,11 @@ export class PageManager {
   }
   get header(): HeaderComponent {
     return this._header ??= new HeaderComponent(this.page);
+  }
+  get products(): ProductsPage {
+    return this._products ??= new ProductsPage(this.page);
+  }
+  get product(): ProductPage {
+    return this._product ??= new ProductPage(this.page);
   }
 }

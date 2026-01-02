@@ -14,6 +14,12 @@ export class LoginSignupPage extends BasePage {
   private readonly loginPasswordInput = this.page.locator('[data-qa="login-password"]');
   private readonly loginButton = this.page.getByRole('button', { name: 'Login' });
 
+  @step()
+  async open(): Promise<this> {
+    await this.page.goto('/login');
+    await this.isLoaded();
+    return this;
+  }
 
   @step()
   async isLoaded(): Promise<this> {

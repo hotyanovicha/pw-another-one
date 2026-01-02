@@ -5,7 +5,7 @@ import { createPerson, Person } from '../../utils/person.factory';
 type Fixtures = {
   pages: PageManager;
   userPages: PageManager;
-  newUser: Person;
+  newUserPages: { pages: PageManager; user: Person }
 };
 
 export const test = base.extend<Fixtures>({
@@ -17,12 +17,12 @@ export const test = base.extend<Fixtures>({
     const storageState = `.auth/user-${testInfo.parallelIndex}.json`;
     const context = await browser.newContext({ storageState });
     const page = await context.newPage();
-    
+
     await use(new PageManager(page));
     await context.close();
   },
 
-  newUser: async ({browser}, use) => {
+  newUserPages: async ({browser}, use) => {
     const user = createPerson();
     
     const context = await browser.newContext();
@@ -43,9 +43,9 @@ export const test = base.extend<Fixtures>({
     await pages.accountCreatedPage.clickContinueButton();
     await pages.header.isLoaded();
     await pages.header.assertUserName(user.name);
-    await use(user);
+    await use({ pages, user });
     await context.close();
-  },
+  }
 });
 
 export { expect } from '@playwright/test';

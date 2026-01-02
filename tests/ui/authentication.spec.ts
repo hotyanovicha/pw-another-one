@@ -1,12 +1,12 @@
 import { test } from '@/ui/fixtures/index';
-import { PageManager } from '@/ui/pages/page-manager'
-import { createPerson, Person } from '@/utils/person.factory';
+import { createPerson } from '@/utils/person.factory';
 
 
-test('Authentication: User Registration with complete profile', { tag: '@P1' }, async ({ pages }: { pages: PageManager }) => {
+test('Authentication: User Registration with complete profile', { tag: '@P1' }, async ({ pages }) => {
     const user = createPerson();
 
     await pages.home.open();
+    await pages.home.isLoaded();
     await pages.consentDialog.acceptIfVisible();
 
     await pages.home.clickSignupLoginLink();
@@ -28,8 +28,11 @@ test('Authentication: User Registration with complete profile', { tag: '@P1' }, 
 });
 
 
-test('Authentication: Login with Registered User', { tag: '@P1' }, async ({pages, newUser}: {pages: PageManager, newUser: Person}) => {
+test('Authentication: Login with Registered User', { tag: '@P1' }, async ({pages, newUserPages}) => {
+    const { user: newUser } = newUserPages;
+
     await pages.home.open();
+    await pages.home.isLoaded();
     await pages.consentDialog.acceptIfVisible();
     await pages.home.clickSignupLoginLink();
     await pages.loginSignupPage.isLoaded();
