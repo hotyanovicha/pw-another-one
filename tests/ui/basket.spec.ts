@@ -1,26 +1,25 @@
 import { test } from '@/ui/fixtures/index';
 
-test('Basket: Add multiple products to cart and verify', {tag: '@P1'}, async ({newUserPages}) => {
-    const { pages } = newUserPages;
+test('Basket: Add multiple products to cart and verify', { tag: '@P1' }, async ({ newUserPages }) => {
+	const { pages } = newUserPages;
 
-    await pages.products.open();
-    await pages.products.isLoaded()
-    await pages.products.assertProductsExist();
-    await pages.products.openProductPage(0);
-    await pages.product.isLoaded();
-    const firstProduct = await pages.product.getProductInfo();
-    await pages.product.addToCart(3)
-    await pages.product.continueShopping()
-    await pages.product.clickBack()
-    await pages.products.openProductPage();
-    await pages.product.isLoaded();
-    const secondProduct = await pages.product.getProductInfo();
-    await pages.product.addToCart(1);
-    await pages.product.openCart();
-    await pages.cart.isLoaded();
-    await pages.cart.assertCartIsCorrect([
-        { name: firstProduct.Name, price: firstProduct.Price, quantity: 3 },
-        { name: secondProduct.Name, price: secondProduct.Price, quantity: 1 },
-]);
-
+	await pages.products.open();
+	await pages.products.isLoaded();
+	await pages.products.assertProductsExist();
+	await pages.products.openProductPage(0);
+	await pages.product.isLoaded();
+	const firstProduct = await pages.product.getProductInfo();
+	await pages.product.addToCart(3);
+	await pages.product.continueShopping();
+	await pages.product.clickBack();
+	await pages.products.openProductPage();
+	await pages.product.isLoaded();
+	const secondProduct = await pages.product.getProductInfo();
+	await pages.product.addToCart(1);
+	await pages.product.openCart();
+	await pages.cart.isLoaded();
+	await pages.cart.assertCartIsCorrect([
+		{ name: firstProduct.Name, price: firstProduct.Price, quantity: 3 },
+		{ name: secondProduct.Name, price: secondProduct.Price, quantity: 1 },
+	]);
 });
