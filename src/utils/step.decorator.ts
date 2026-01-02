@@ -1,21 +1,22 @@
 import { test } from '@playwright/test';
 
+type AnyFunction = (...args: any[]) => any;
+
 export function step(stepName?: string) {
-	return function <This, Args extends any[], R>(
-		originalMethod: (this: This, ...args: Args) => Promise<R>,
-		context: ClassMethodDecoratorContext<This, (this: This, ...args: Args) => Promise<R>>
-	) {
-		if (context.kind !== 'method') {
-			throw new TypeError('@step can be used only on class methods');
+	return function decorator<T extends AnyFunction>(target: T, context: ClassMethodDecoratorContext): T {
+		const methodName = String(context.name);
+
+		async function replacementMethod(this: any, ...args: any[]): Promise<ReturnType<T>> {
+			const name = stepName || `${this.constructor.name}.${methodName}`;
+			return (await test.step(
+				name,
+				async () => {
+					return await target.apply(this, args);
+				},
+				{ box: true }
+			)) as ReturnType<T>;
 		}
 
-		return function (this: This, ...args: Args): Promise<R> {
-			const className = (this as any)?.constructor?.name ?? 'Object';
-
-			const name = stepName ?? `${className}.${String(context.name)}`;
-
-			// returned -> satisfies playwright/missing-playwright-await
-			return test.step(name, async () => await originalMethod.apply(this, args), { box: true });
-		};
+		return replacementMethod as T;
 	};
 }
