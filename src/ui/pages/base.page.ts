@@ -22,4 +22,9 @@ export abstract class BasePage {
   async assertUrl(url: string): Promise<void> {
     await expect(this.page).toHaveURL(url);
   }
+
+  @step()
+  async clickBack(): Promise<void> {
+    await this.page.goBack();
+  }
 }

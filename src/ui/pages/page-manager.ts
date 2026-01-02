@@ -7,6 +7,7 @@ import { ConsentDialog } from '@/ui/pages/consent-dialog.component';
 import { HeaderComponent } from '@/ui/pages/header.component';
 import { ProductsPage } from '@/ui/pages/products.page';
 import { ProductPage } from '@/ui/pages/product.page';
+import { CartPage } from '@/ui/pages/cart.page'
 
 
 export class PageManager {
@@ -18,6 +19,7 @@ export class PageManager {
     private _header?: HeaderComponent;
     private _products?: ProductsPage;
     private _product?: ProductPage;
+    private _cart?: CartPage;
     constructor(private page: Page) {}
 
   get home(): HomePage {
@@ -43,5 +45,8 @@ export class PageManager {
   }
   get product(): ProductPage {
     return this._product ??= new ProductPage(this.page);
+  }
+  get cart(): CartPage {
+    return this._cart ??= new CartPage(this.page);
   }
 }
