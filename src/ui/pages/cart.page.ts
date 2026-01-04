@@ -13,6 +13,11 @@ export class CartPage extends BasePage {
 	private readonly rows = this.page.locator('#cart_info_table tbody tr');
 
 	@step()
+	async open(): Promise<void> {
+		await this.page.goto('/view_cart');
+	}
+
+	@step()
 	async assertCartIsCorrect(expected: CartItem[]): Promise<void> {
 		await expect(this.rows.first()).toBeVisible();
 		await expect(this.rows).toHaveCount(expected.length);
