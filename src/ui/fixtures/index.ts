@@ -1,6 +1,9 @@
 import { test as base } from '@playwright/test';
 import { PageManager } from '../pages/page-manager';
 import { createPerson, Person } from '../../utils/person.factory';
+import config from '../../playwright.config';
+
+const AUTH_USER_COUNT = Number(config.workers) || 1;
 
 type Fixtures = {
 	pages: PageManager;
@@ -14,7 +17,8 @@ export const test = base.extend<Fixtures>({
 	},
 
 	userPages: async ({ browser }, use, testInfo) => {
-		const storageState = `.auth/user-${testInfo.workerIndex}.json`;
+		const userIndex = testInfo.workerIndex % AUTH_USER_COUNT;
+		const storageState = `.auth/user-${userIndex}.json`;
 		const context = await browser.newContext({ storageState });
 		const page = await context.newPage();
 
