@@ -14,7 +14,7 @@ export const test = base.extend<Fixtures>({
 	},
 
 	userPages: async ({ browser }, use, testInfo) => {
-		const storageState = `.auth/user-${testInfo.parallelIndex}.json`;
+		const storageState = `.auth/user-${testInfo.workerIndex}.json`;
 		const context = await browser.newContext({ storageState });
 		const page = await context.newPage();
 
