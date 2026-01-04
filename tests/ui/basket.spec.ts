@@ -42,7 +42,9 @@ test('Basket: Remove product from cart', { tag: '@P1' }, async ({ newUserPages }
 		{ name: secondProduct.name, price: secondProduct.price, quantity: 1 },
 	]);
 
-	(await pages.cart.deleteProduct(firstProduct.name), await pages.cart.assertProductDeleted(firstProduct.name));
-	(await pages.cart.deleteProduct(secondProduct.name), await pages.cart.assertProductDeleted(secondProduct.name));
+	await pages.cart.deleteProduct(firstProduct.name);
+	await pages.cart.assertProductDeleted(firstProduct.name);
+	await pages.cart.deleteProduct(secondProduct.name);
+	await pages.cart.assertProductDeleted(secondProduct.name);
 	await pages.cart.assertCartEmpty();
 });
