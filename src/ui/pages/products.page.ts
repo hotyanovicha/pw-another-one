@@ -61,6 +61,7 @@ export class ProductsPage extends BasePage {
 		};
 	}
 
+	//create component for cart modal
 	@step()
 	async continueShopping(): Promise<void> {
 		await expect(this.cartModal).toBeVisible();

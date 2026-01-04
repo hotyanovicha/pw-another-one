@@ -27,10 +27,13 @@ test('Basket: Add multiple products to cart and verify', { tag: '@P1' }, async (
 test('Basket: Remove product from cart', { tag: '@P1' }, async ({ newUserPages }) => {
 	const { pages } = newUserPages;
 
+	//create precondition for the test
 	await pages.products.open();
 	await pages.products.isLoaded();
+	//update add product to cart
 	const firstProduct = await pages.products.addToCart(6);
 	await pages.products.continueShopping();
+	//update add product to cart
 	const secondProduct = await pages.products.addToCart(7);
 	await pages.products.continueShopping();
 
