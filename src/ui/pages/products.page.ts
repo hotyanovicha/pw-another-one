@@ -52,7 +52,7 @@ export class ProductsPage extends BasePage {
 		const addToCart = productCard.locator('.product-overlay a.add-to-cart');
 		const productCardPriceText = (await productCard.locator('.product-overlay h2').innerText()).trim();
 		const productCardPrice = Number(productCardPriceText.replace(/[^\d]/g, ''));
-		const productCardName = await productCard.locator('.product-overlay p2').innerText();
+		const productCardName = await productCard.locator('.product-overlay p').innerText();
 		await addToCart.click();
 		return {
 			name: productCardName,

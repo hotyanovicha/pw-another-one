@@ -2,11 +2,9 @@ import { test as setup } from '@playwright/test';
 import fs from 'fs';
 import { PageManager } from '@/ui/pages/page-manager';
 import { getUserByIndex } from '@/utils/users';
-import config from '../playwright.config';
+import { AUTH_USER_COUNT } from '@/config/auth.config';
 
-const WORKER_COUNT = Number(config.workers) || 1;
-
-for (let i = 0; i < WORKER_COUNT; i++) {
+for (let i = 0; i < AUTH_USER_COUNT; i++) {
 	setup(`authenticate user ${i}`, async ({ page }) => {
 		fs.mkdirSync('.auth', { recursive: true });
 

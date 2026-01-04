@@ -1,9 +1,7 @@
 import { test as base } from '@playwright/test';
 import { PageManager } from '../pages/page-manager';
 import { createPerson, Person } from '../../utils/person.factory';
-import config from '../../playwright.config';
-
-const AUTH_USER_COUNT = Number(config.workers) || 1;
+import { AUTH_USER_COUNT } from '@/config/auth.config';
 
 type Fixtures = {
 	pages: PageManager;

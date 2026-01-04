@@ -24,21 +24,25 @@ test('Basket: Add multiple products to cart and verify', { tag: '@P1' }, async (
 	]);
 });
 
-test('Basket: Remove product from cart', { tag: '@P1' }, async ({ userPages }) => {
-	//const { pages } = userPages;
+test('Basket: Remove product from cart', { tag: '@P1' }, async ({ newUserPages }) => {
+	const { pages } = newUserPages;
 
-	await userPages.products.open();
-	await userPages.products.isLoaded();
-	const firstProduct = await userPages.products.addToCart(10);
-	await userPages.products.continueShopping();
-	const secondProduct = await userPages.products.addToCart(11);
-	await userPages.products.continueShopping();
+	await pages.products.open();
+	await pages.products.isLoaded();
+	const firstProduct = await pages.products.addToCart(6);
+	await pages.products.continueShopping();
+	const secondProduct = await pages.products.addToCart(7);
+	await pages.products.continueShopping();
 
-	await userPages.cart.open();
-	await userPages.cart.isLoaded();
+	await pages.cart.open();
+	await pages.cart.isLoaded();
 
-	await userPages.cart.assertCartIsCorrect([
+	await pages.cart.assertCartIsCorrect([
 		{ name: firstProduct.name, price: firstProduct.price, quantity: 1 },
 		{ name: secondProduct.name, price: secondProduct.price, quantity: 1 },
 	]);
+
+	(await pages.cart.deleteProduct(firstProduct.name), await pages.cart.assertProductDeleted(firstProduct.name));
+	(await pages.cart.deleteProduct(secondProduct.name), await pages.cart.assertProductDeleted(secondProduct.name));
+	await pages.cart.assertCartEmpty();
 });
