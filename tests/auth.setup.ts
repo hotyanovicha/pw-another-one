@@ -4,7 +4,7 @@ import { PageManager } from '@/ui/pages/page-manager';
 import { getUserByIndex } from '@/utils/users';
 import config from '../playwright.config';
 
-const WORKER_COUNT = config.workers ?? 1;
+const WORKER_COUNT = Number(config.workers) || 1;
 
 for (let i = 0; i < WORKER_COUNT; i++) {
 	setup(`authenticate user ${i}`, async ({ page }) => {
