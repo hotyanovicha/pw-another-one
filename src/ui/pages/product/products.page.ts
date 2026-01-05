@@ -95,12 +95,12 @@ export class ProductsPage extends BasePage {
 	}
 
 	@step()
-	async assertSearchResults(keyword?: string): Promise<void> {
+	async assertSearchResults(keyword: string): Promise<void> {
 		const products = await this.productCards.all();
 		expect(products.length).toBeGreaterThan(0);
 		for (const product of products) {
 			const productName = await product.locator(this.productName).innerText();
-			expect(productName).toContain(keyword ?? '');
+			expect(productName).toContain(keyword);
 		}
 	}
 
