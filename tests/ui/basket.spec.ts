@@ -1,4 +1,5 @@
 import { test } from '@/ui/fixtures/index';
+import { ProductInfo } from '@/ui/pages/product/products.page';
 
 test('Basket: Add multiple products to cart and verify', { tag: '@P1' }, async ({ newUserPages }) => {
 	const { pages } = newUserPages;
@@ -10,13 +11,13 @@ test('Basket: Add multiple products to cart and verify', { tag: '@P1' }, async (
 	await pages.product.isLoaded();
 	const firstProduct = await pages.product.getProductInfo();
 	await pages.product.addToCart(3);
-	await pages.product.continueShopping();
+	await pages.cartModal.continueShopping();
 	await pages.product.clickBack();
 	await pages.products.openProductPage();
 	await pages.product.isLoaded();
 	const secondProduct = await pages.product.getProductInfo();
 	await pages.product.addToCart(1);
-	await pages.product.openCart();
+	await pages.cartModal.openCart();
 	await pages.cart.isLoaded();
 	await pages.cart.assertCartIsCorrect([
 		{ name: firstProduct.Name, price: firstProduct.Price, quantity: 3 },
@@ -24,30 +25,36 @@ test('Basket: Add multiple products to cart and verify', { tag: '@P1' }, async (
 	]);
 });
 
-test('Basket: Remove product from cart', { tag: '@P1' }, async ({ newUserPages }) => {
-	const { pages } = newUserPages;
+test.describe('Basket', () => {
+	let firstProduct: ProductInfo;
+	let secondProduct: ProductInfo;
+	let cartPage: any;
 
-	//create precondition for the test
-	await pages.products.open();
-	await pages.products.isLoaded();
-	//update add product to cart
-	const firstProduct = await pages.products.addToCart(6);
-	await pages.products.continueShopping();
-	//update add product to cart
-	const secondProduct = await pages.products.addToCart(7);
-	await pages.products.continueShopping();
+	test.beforeEach(async ({ newUserPages }) => {
+		const { pages } = newUserPages;
+		cartPage = pages;
 
-	await pages.cart.open();
-	await pages.cart.isLoaded();
+		await pages.products.open();
+		await pages.products.isLoaded();
+		firstProduct = await pages.products.addToCart(0);
+		await pages.cartModal.continueShopping();
+		secondProduct = await pages.products.addToCart();
+		await pages.cartModal.continueShopping();
 
-	await pages.cart.assertCartIsCorrect([
-		{ name: firstProduct.name, price: firstProduct.price, quantity: 1 },
-		{ name: secondProduct.name, price: secondProduct.price, quantity: 1 },
-	]);
+		await pages.cart.open();
+		await pages.cart.isLoaded();
 
-	await pages.cart.deleteProduct(firstProduct.name);
-	await pages.cart.assertProductDeleted(firstProduct.name);
-	await pages.cart.deleteProduct(secondProduct.name);
-	await pages.cart.assertProductDeleted(secondProduct.name);
-	await pages.cart.assertCartEmpty();
+		await pages.cart.assertCartIsCorrect([
+			{ name: firstProduct.name, price: firstProduct.price, quantity: 1 },
+			{ name: secondProduct.name, price: secondProduct.price, quantity: 1 },
+		]);
+	});
+
+	test('Basket: Remove product from cart', { tag: '@P1' }, async () => {
+		await cartPage.cart.deleteProduct(firstProduct.name);
+		await cartPage.cart.assertProductDeleted(firstProduct.name);
+		await cartPage.cart.deleteProduct(secondProduct.name);
+		await cartPage.cart.assertProductDeleted(secondProduct.name);
+		await cartPage.cart.assertCartEmpty();
+	});
 });

@@ -1,7 +1,8 @@
 import { test as base } from '@playwright/test';
+import type { BrowserContext } from '@playwright/test';
 import { PageManager } from '../pages/page-manager';
-import { createPerson, Person } from '../../utils/person.factory';
-import { AUTH_USER_COUNT } from '@/config/auth.config';
+import { createPerson, Person } from '@/utils/person.factory';
+import { AUTH_USER_COUNT } from '../../../playwright.config';
 
 type Fixtures = {
 	pages: PageManager;
@@ -11,6 +12,7 @@ type Fixtures = {
 
 export const test = base.extend<Fixtures>({
 	pages: async ({ page }, use) => {
+		await blockGoogleAds(page.context());
 		await use(new PageManager(page));
 	},
 
@@ -18,6 +20,7 @@ export const test = base.extend<Fixtures>({
 		const userIndex = testInfo.workerIndex % AUTH_USER_COUNT;
 		const storageState = `.auth/user-${userIndex}.json`;
 		const context = await browser.newContext({ storageState });
+		await blockGoogleAds(context);
 		const page = await context.newPage();
 
 		await use(new PageManager(page));
@@ -28,6 +31,7 @@ export const test = base.extend<Fixtures>({
 		const user = createPerson();
 
 		const context = await browser.newContext();
+		await blockGoogleAds(context);
 		const page = await context.newPage();
 		const pages = new PageManager(page);
 
@@ -51,3 +55,22 @@ export const test = base.extend<Fixtures>({
 });
 
 export { expect } from '@playwright/test';
+
+export async function blockGoogleAds(context: BrowserContext) {
+	await context.route('**/*', (route) => {
+		const url = route.request().url();
+
+		let host = '';
+		try {
+			host = new URL(url).hostname;
+		} catch {
+			return route.continue();
+		}
+
+		if (host === 'googlesyndication.com' || host.endsWith('.googlesyndication.com')) {
+			return route.abort();
+		}
+
+		return route.continue();
+	});
+}

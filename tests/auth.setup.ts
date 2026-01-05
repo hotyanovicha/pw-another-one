@@ -2,7 +2,7 @@ import { test as setup } from '@playwright/test';
 import fs from 'fs';
 import { PageManager } from '@/ui/pages/page-manager';
 import { getUserByIndex } from '@/utils/users';
-import { AUTH_USER_COUNT } from '@/config/auth.config';
+import { AUTH_USER_COUNT } from '../playwright.config';
 
 for (let i = 0; i < AUTH_USER_COUNT; i++) {
 	setup(`authenticate user ${i}`, async ({ page }) => {

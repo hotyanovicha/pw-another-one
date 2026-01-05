@@ -15,7 +15,6 @@
     "baseUrl": ".",
     "experimentalDecorators": false,
     "paths": {
-      "@/config/*": ["src/config/*"],
       "@/utils/*": ["src/utils/*"],
       "@/ui/pages/*": ["src/ui/pages/*"],
       "@/ui/fixtures/*": ["src/ui/fixtures/*"],

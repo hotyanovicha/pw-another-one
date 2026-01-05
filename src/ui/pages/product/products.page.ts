@@ -14,9 +14,6 @@ export class ProductsPage extends BasePage {
 	private readonly viewProductLinks = this.page.locator('.choose a[href^="/product_details/"]');
 	private readonly productCards = this.page.locator('.single-products');
 
-	private readonly cartModal = this.page.locator('#cartModal');
-	private readonly continueShoppingBtn = this.cartModal.getByRole('button', { name: 'Continue Shopping' });
-
 	@step()
 	async open(): Promise<void> {
 		await this.page.goto('/products');
@@ -60,15 +57,6 @@ export class ProductsPage extends BasePage {
 			index: i,
 		};
 	}
-
-	//create component for cart modal
-	@step()
-	async continueShopping(): Promise<void> {
-		await expect(this.cartModal).toBeVisible();
-		await this.continueShoppingBtn.click();
-		await expect(this.cartModal).toBeHidden();
-	}
-
 	@step()
 	async assertProductsExist(): Promise<void> {
 		const countProducts = await this.viewProductLinks.count();
