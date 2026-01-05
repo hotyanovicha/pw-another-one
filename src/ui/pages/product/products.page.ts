@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { BasePage } from '@/ui/pages/base.page';
 import { step } from '@/utils/step.decorator';
+import { ProductPage } from './product.page';
 
 export type ProductInfo = {
 	name: string;
@@ -19,8 +20,46 @@ export class ProductsPage extends BasePage {
 		await this.page.goto('/products');
 	}
 
+	/* Code Quality
+
+  Duplicate logic (lines 24-31 & 39-44):
+  // Same pattern repeated twice:
+  let i = index;
+  if (i === undefined) {
+      expect(count).toBeGreaterThan(1);
+      i = 1 + Math.floor(Math.random() * (count - 1));
+  }
+  Consider: Extract to private method private resolveIndex(count: number, index?: number): number
+
+  addToCart does too many things:
+  - Counts products
+  - Resolves index
+  - Scrolls & hovers
+  - Extracts product name
+  - Extracts price
+  - Clicks add to cart
+  - Returns data
+
+  Consider: Split into getProductInfo(index) + addToCart(index) - one for data extraction, one for action
+
+  Inline locators in method body:
+  productCard.locator('.product-overlay a.add-to-cart')
+  productCard.locator('.product-overlay h2')
+  productCard.locator('.product-overlay p')
+  These should be private locators at class level for maintainability
+
+  Magic number 1:
+  i = 1 + Math.floor(Math.random() * (count - 1));
+  Why skip index 0? Add comment or extract to constant like SKIP_FIRST_PRODUCT = 1
+
+  Missing JSDoc:
+  /**
+   * Opens product detail page
+   * @param index - Product index. If undefined, selects random product (excluding first)
+   */
+
 	@step()
-	async openProductPage(index?: number): Promise<void> {
+	async openProductPage(index?: number): Promise<ProductPage> {
 		const count = await this.viewProductLinks.count();
 		expect(count).toBeGreaterThan(0);
 		let i = index;
@@ -30,6 +69,7 @@ export class ProductsPage extends BasePage {
 			i = 1 + Math.floor(Math.random() * (count - 1));
 		}
 		await this.viewProductLinks.nth(i).click();
+		return new ProductPage(this.page);
 	}
 
 	@step()

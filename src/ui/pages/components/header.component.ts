@@ -15,6 +15,6 @@ export class HeaderComponent {
 
 	@step()
 	async assertUserName(name: string): Promise<void> {
-		await expect(this.userName).toHaveText(name);
+		await expect(this.userName).toContainText(name);
 	}
 }

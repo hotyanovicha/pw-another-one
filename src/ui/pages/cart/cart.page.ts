@@ -20,19 +20,19 @@ export class CartPage extends BasePage {
 	}
 
 	@step()
-	async deleteProduct(productname: string): Promise<void> {
+	async deleteProduct(productName: string): Promise<void> {
 		await this.page
-			.getByRole('row', { name: `${productname}` })
+			.getByRole('row', { name: `${productName}` })
 			.locator('.cart_quantity_delete')
 			.click();
 	}
 
 	@step()
-	async assertProductDeleted(productname: string): Promise<void> {
+	async assertProductDeleted(productName: string): Promise<void> {
 		await expect
-			.poll(async () => await this.rowByName(productname).count(), {
+			.poll(async () => await this.rowByName(productName).count(), {
 				timeout: 5000,
-				message: `Expected "${productname}" to be removed from cart`,
+				message: `Expected "${productName}" to be removed from cart`,
 			})
 			.toBe(0);
 	}

@@ -20,13 +20,13 @@ export class ProductPage extends BasePage {
 
 	@step()
 	async getProductInfo(): Promise<{
-		Name: string;
-		Price: number;
+		name: string;
+		price: number;
 	}> {
 		await expect(this.productInfo).toBeVisible();
 		const name = (await this.productName.textContent())?.trim() ?? '';
 		const priceRaw = (await this.productPriceText.first().textContent())?.trim() ?? '';
 		const price = Number(priceRaw.replace(/[^\d]/g, ''));
-		return { Name: name, Price: price };
+		return { name: name, price: price };
 	}
 }
