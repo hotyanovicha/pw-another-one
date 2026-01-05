@@ -56,7 +56,7 @@ export const test = base.extend<Fixtures>({
 
 export { expect } from '@playwright/test';
 
-export async function blockGoogleAds(context: BrowserContext) {
+export async function blockGoogleAds(context: BrowserContext): Promise<void> {
 	await context.route('**/*', (route) => {
 		const url = route.request().url();
 

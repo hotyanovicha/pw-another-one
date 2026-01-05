@@ -41,9 +41,11 @@ test.describe('Basket', () => {
 
 		await pages.products.open();
 		await pages.products.isLoaded();
-		firstProduct = await pages.products.addToCart(0);
+		firstProduct = await pages.products.selectProduct(0);
+		await pages.products.addToCart(firstProduct.index);
 		await pages.cartModal.continueShopping();
-		secondProduct = await pages.products.addToCart();
+		secondProduct = await pages.products.selectProduct();
+		await pages.products.addToCart(secondProduct.index);
 		await pages.cartModal.continueShopping();
 
 		await pages.cart.open();

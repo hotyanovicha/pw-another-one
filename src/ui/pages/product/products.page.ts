@@ -15,88 +15,65 @@ export class ProductsPage extends BasePage {
 	private readonly viewProductLinks = this.page.locator('.choose a[href^="/product_details/"]');
 	private readonly productCards = this.page.locator('.single-products');
 
+	private readonly productOverlay = '.product-overlay';
+	private readonly productPrice = `${this.productOverlay} h2`;
+	private readonly productName = `${this.productOverlay} p`;
+	private readonly addToCartButton = `${this.productOverlay} a.add-to-cart`;
+
 	@step()
 	async open(): Promise<void> {
 		await this.page.goto('/products');
 	}
 
-	/* Code Quality
-
-  Duplicate logic (lines 24-31 & 39-44):
-  // Same pattern repeated twice:
-  let i = index;
-  if (i === undefined) {
-      expect(count).toBeGreaterThan(1);
-      i = 1 + Math.floor(Math.random() * (count - 1));
-  }
-  Consider: Extract to private method private resolveIndex(count: number, index?: number): number
-
-  addToCart does too many things:
-  - Counts products
-  - Resolves index
-  - Scrolls & hovers
-  - Extracts product name
-  - Extracts price
-  - Clicks add to cart
-  - Returns data
-
-  Consider: Split into getProductInfo(index) + addToCart(index) - one for data extraction, one for action
-
-  Inline locators in method body:
-  productCard.locator('.product-overlay a.add-to-cart')
-  productCard.locator('.product-overlay h2')
-  productCard.locator('.product-overlay p')
-  These should be private locators at class level for maintainability
-
-  Magic number 1:
-  i = 1 + Math.floor(Math.random() * (count - 1));
-  Why skip index 0? Add comment or extract to constant like SKIP_FIRST_PRODUCT = 1
-
-  Missing JSDoc:
-  /**
-   * Opens product detail page
-   * @param index - Product index. If undefined, selects random product (excluding first)
-   */
-
 	@step()
 	async openProductPage(index?: number): Promise<ProductPage> {
 		const count = await this.viewProductLinks.count();
 		expect(count).toBeGreaterThan(0);
-		let i = index;
 
-		if (i === undefined) {
-			expect(count).toBeGreaterThan(1);
-			i = 1 + Math.floor(Math.random() * (count - 1));
-		}
+		const i = this.resolveIndex(count, index);
+
 		await this.viewProductLinks.nth(i).click();
 		return new ProductPage(this.page);
 	}
 
 	@step()
-	async addToCart(index?: number): Promise<ProductInfo> {
+	async selectProduct(index?: number): Promise<ProductInfo> {
 		const count = await this.productCards.count();
 		expect(count).toBeGreaterThan(0);
-		let i = index;
-		if (i === undefined) {
-			expect(count).toBeGreaterThan(1);
-			i = 1 + Math.floor(Math.random() * (count - 1));
-		}
+
+		const i = this.resolveIndex(count, index);
 		const productCard = this.productCards.nth(i);
+
 		await productCard.scrollIntoViewIfNeeded();
 		await expect(productCard).toBeVisible();
 		await productCard.hover();
 
-		const addToCart = productCard.locator('.product-overlay a.add-to-cart');
-		const productCardPriceText = (await productCard.locator('.product-overlay h2').innerText()).trim();
-		const productCardPrice = Number(productCardPriceText.replace(/[^\d]/g, ''));
-		const productCardName = await productCard.locator('.product-overlay p').innerText();
-		await addToCart.click();
+		const name = await productCard.locator(this.productName).innerText();
+		const priceText = (await productCard.locator(this.productPrice).innerText()).trim();
+		const price = Number(priceText.replace(/[^\d]/g, ''));
+
 		return {
-			name: productCardName,
-			price: productCardPrice,
+			name: name,
+			price: price,
 			index: i,
 		};
 	}
+
+	@step()
+	async addToCart(index: number): Promise<void> {
+		const selectedProduct = this.productCards.nth(index);
+		const addToCartBtn = selectedProduct.locator(this.addToCartButton);
+		await addToCartBtn.click();
+	}
+
+	private resolveIndex(count: number, index?: number): number {
+		if (index !== undefined) {
+			return index;
+		}
+		expect(count).toBeGreaterThan(1);
+		return 1 + Math.floor(Math.random() * (count - 1));
+	}
+
 	@step()
 	async assertProductsExist(): Promise<void> {
 		const countProducts = await this.viewProductLinks.count();
