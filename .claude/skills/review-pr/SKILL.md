@@ -155,6 +155,11 @@ Use Read tool to view complete files mentioned in the diff.
 - Consider CI/CD: "Will this work reliably in pipeline?"
 - Assess risk: "What could this break? What's not covered?"
 
+**Patterns to flag for extra review (not issues, just note them):**
+- Public locators used for assertion flexibility
+- Generic assertion helpers (e.g., `assertElementVisible(locator)`)
+- Trade-offs between encapsulation and pragmatism
+
 ```markdown
 ## PR Review: [Title] (#[Number])
 
@@ -171,6 +176,10 @@ Critical issues that must be fixed.
 | File:Line | Issue | Suggestion |
 |-----------|-------|------------|
 | `file.ts:42` | Description | How to fix |
+
+### 👀 For Your Review
+Design decisions that may be intentional - verify they fit your context:
+- [pattern] at `file.ts:line` - [brief description]
 
 ### 📝 Git Hygiene
 **PR title:** `Current` → `Suggested improvement`

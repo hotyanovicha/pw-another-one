@@ -27,4 +27,9 @@ export abstract class BasePage {
 	async clickBack(): Promise<void> {
 		await this.page.goBack();
 	}
+
+	@step()
+	async assertElementVisible(locator: Locator): Promise<void> {
+		await expect(locator).toBeVisible();
+	}
 }
