@@ -100,7 +100,7 @@ export class ProductsPage extends BasePage {
 		expect(products.length).toBeGreaterThan(0);
 		for (const product of products) {
 			const productName = await product.locator(this.productName).innerText();
-			expect(productName).toContain(keyword.toLowerCase());
+			expect(productName.toLowerCase()).toContain(keyword.toLowerCase());
 		}
 	}
 
