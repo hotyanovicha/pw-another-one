@@ -11,6 +11,8 @@ dotenvExpand.expand(
 	})
 );
 
+export const AUTH_USER_COUNT = 5;
+
 export default defineConfig({
 	testDir: './tests',
 	fullyParallel: true,

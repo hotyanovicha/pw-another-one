@@ -1,13 +1,14 @@
 import { Page } from '@playwright/test';
-import { HomePage } from '@/ui/pages/home.page';
-import { LoginSignupPage } from '@/ui/pages/login-signup.page';
-import { SignupPage } from '@/ui/pages/signup.page';
-import { AccountCreatedPage } from '@/ui/pages/account-created.page';
-import { ConsentDialog } from '@/ui/pages/consent-dialog.component';
-import { HeaderComponent } from '@/ui/pages/header.component';
-import { ProductsPage } from '@/ui/pages/products.page';
-import { ProductPage } from '@/ui/pages/product.page';
-import { CartPage } from '@/ui/pages/cart.page';
+import { HomePage } from '@/ui/pages/home-page/home.page';
+import { LoginSignupPage } from '@/ui/pages/auth/login-signup.page';
+import { SignupPage } from '@/ui/pages/auth/signup.page';
+import { AccountCreatedPage } from '@/ui/pages/auth/account-created.page';
+import { ConsentDialog } from '@/ui/pages/components/consent-dialog.component';
+import { HeaderComponent } from '@/ui/pages/components/header.component';
+import { ProductsPage } from '@/ui/pages/product/products.page';
+import { ProductPage } from '@/ui/pages/product/product.page';
+import { CartPage } from '@/ui/pages/cart/cart.page';
+import { CartModal } from '@/ui/pages/components/cart-modal.component';
 
 export class PageManager {
 	private _home?: HomePage;
@@ -19,6 +20,7 @@ export class PageManager {
 	private _products?: ProductsPage;
 	private _product?: ProductPage;
 	private _cart?: CartPage;
+	private _cartModal?: CartModal;
 	constructor(private page: Page) {}
 
 	get home(): HomePage {
@@ -47,5 +49,8 @@ export class PageManager {
 	}
 	get cart(): CartPage {
 		return (this._cart ??= new CartPage(this.page));
+	}
+	get cartModal(): CartModal {
+		return (this._cartModal ??= new CartModal(this.page));
 	}
 }

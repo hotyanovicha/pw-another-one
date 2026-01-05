@@ -12,6 +12,36 @@ export class CartPage extends BasePage {
 	protected readonly uniqueElement = this.page.locator('section#cart_items');
 	private readonly rows = this.page.locator('#cart_info_table tbody tr');
 
+	private readonly emptyCart = this.page.locator('#empty_cart p', { hasText: 'Cart is empty!' });
+
+	@step()
+	async open(): Promise<void> {
+		await this.page.goto('/view_cart');
+	}
+
+	@step()
+	async deleteProduct(productName: string): Promise<void> {
+		await this.page
+			.getByRole('row', { name: `${productName}` })
+			.locator('.cart_quantity_delete')
+			.click();
+	}
+
+	@step()
+	async assertProductDeleted(productName: string): Promise<void> {
+		await expect
+			.poll(async () => await this.rowByName(productName).count(), {
+				timeout: 5000,
+				message: `Expected "${productName}" to be removed from cart`,
+			})
+			.toBe(0);
+	}
+
+	@step()
+	async assertCartEmpty(): Promise<void> {
+		await expect(this.emptyCart).toBeVisible();
+	}
+
 	@step()
 	async assertCartIsCorrect(expected: CartItem[]): Promise<void> {
 		await expect(this.rows.first()).toBeVisible();

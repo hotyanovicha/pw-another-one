@@ -1,6 +1,9 @@
 {
     "users": [
       { "key": "USER_1", "email": "jaycee.tillman-douglas@gmail.com", "password": "d0KefDohOZOO" },
-      { "key": "USER_2", "email": "randal_smith31@yahoo.com", "password": "hjfUfk0cXLIY" }
+      { "key": "USER_2", "email": "randal_smith31@yahoo.com", "password": "hjfUfk0cXLIY" },
+      { "key": "USER_3", "email": "kennedy_beahan@yahoo.com", "password": "15pwJ5u9TYDs" },
+      { "key": "USER_4", "email": "thaddeus.ward@gmail.com", "password": "HWMwhNYvbn7l" },
+      { "key": "USER_5", "email": "alysson_boyle@hotmail.com", "password": "u_J34iPgTe16" }
     ]
 }

@@ -1,11 +1,9 @@
-import { expect } from '@playwright/test';
 import { BasePage } from '@/ui/pages/base.page';
 import { step } from '@/utils/step.decorator';
 
 export class LoginSignupPage extends BasePage {
 	protected readonly uniqueElement = this.page.locator('.signup-form');
 
-	private readonly newUserSignupHeading = this.uniqueElement.getByRole('heading', { name: 'New User Signup!' });
 	private readonly nameInput = this.page.locator('[data-qa="signup-name"]');
 	private readonly emailInput = this.page.locator('[data-qa="signup-email"]');
 	private readonly signupButton = this.page.getByRole('button', { name: 'Signup' });
@@ -17,17 +15,8 @@ export class LoginSignupPage extends BasePage {
 	@step()
 	async open(): Promise<this> {
 		await this.page.goto('/login');
-		await this.isLoaded();
 		return this;
 	}
-
-	@step()
-	async isLoaded(): Promise<this> {
-		await super.isLoaded();
-		await expect.soft(this.newUserSignupHeading).toBeVisible();
-		return this;
-	}
-
 	@step()
 	async enterNameAndEmail(name: string, email: string): Promise<void> {
 		await this.nameInput.fill(name);
