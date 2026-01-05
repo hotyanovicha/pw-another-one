@@ -20,6 +20,10 @@ export class ProductsPage extends BasePage {
 	private readonly productName = `${this.productOverlay} p`;
 	private readonly addToCartButton = `${this.productOverlay} a.add-to-cart`;
 
+	private readonly searchField = this.page.locator('#search_product');
+	public readonly searchedProductsTitle = this.page.getByRole('heading', { name: 'Searched Products' });
+	private readonly searchBtn = this.page.locator('#submit_search');
+
 	@step()
 	async open(): Promise<void> {
 		await this.page.goto('/products');
@@ -66,17 +70,45 @@ export class ProductsPage extends BasePage {
 		await addToCartBtn.click();
 	}
 
-	private resolveIndex(count: number, index?: number): number {
-		if (index !== undefined) {
-			return index;
-		}
-		expect(count).toBeGreaterThan(1);
-		return 1 + Math.floor(Math.random() * (count - 1));
+	@step()
+	async searchProduct(keyword?: string): Promise<void> {
+		await this.searchField.fill(keyword ?? '');
+		await this.searchBtn.click();
+	}
+
+	@step()
+	async assertSearchExist(): Promise<void> {
+		await expect(this.searchField).toBeVisible();
 	}
 
 	@step()
 	async assertProductsExist(): Promise<void> {
 		const countProducts = await this.viewProductLinks.count();
 		expect(countProducts).toBeGreaterThan(2);
+	}
+
+	@step()
+	async assertSearchResultsEmpty(): Promise<void> {
+		await expect(this.searchedProductsTitle).toBeVisible();
+		const countProducts = await this.productCards.all();
+		expect(countProducts.length).toBe(0);
+	}
+
+	@step()
+	async assertSearchResults(keyword?: string): Promise<void> {
+		const products = await this.productCards.all();
+		expect(products.length).toBeGreaterThan(0);
+		for (const product of products) {
+			const productName = await product.locator(this.productName).innerText();
+			expect(productName).toContain(keyword ?? '');
+		}
+	}
+
+	private resolveIndex(count: number, index?: number): number {
+		if (index !== undefined) {
+			return index;
+		}
+		expect(count).toBeGreaterThan(1);
+		return 1 + Math.floor(Math.random() * (count - 1));
 	}
 }
