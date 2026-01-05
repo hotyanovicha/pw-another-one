@@ -1,6 +1,6 @@
 import { test } from '@/ui/fixtures/index';
 
-test('Search products by keywords', async ({ pages }) => {
+test('Search products by keywords', { tag: '@P1' }, async ({ pages }) => {
 	await pages.products.open();
 	await pages.products.isLoaded();
 
@@ -12,7 +12,7 @@ test('Search products by keywords', async ({ pages }) => {
 
 	await pages.products.openProductPage(firstProduct.index);
 	await pages.product.isLoaded();
-	await pages.product.getProductInfo();
+	await pages.product.assertProductInfo(firstProduct);
 
 	await pages.product.clickBack();
 	await pages.products.assertSearchExist();
