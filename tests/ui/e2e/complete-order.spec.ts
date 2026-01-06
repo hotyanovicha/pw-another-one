@@ -1,5 +1,4 @@
 import { test } from '@/ui/fixtures/index';
-import { CREDIT_CARDS } from '@/ui/test-data/constants/credit-card';
 
 test('E2E: New User: Complete order with valid card', { tag: '@P1' }, async ({ newUserPages }) => {
 	const { pages, user } = newUserPages;
