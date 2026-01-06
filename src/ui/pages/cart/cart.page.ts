@@ -11,6 +11,7 @@ type CartItem = {
 export class CartPage extends BasePage {
 	protected readonly uniqueElement = this.page.locator('section#cart_items');
 	private readonly rows = this.page.locator('#cart_info_table tbody tr');
+	private readonly proceedBtn = this.page.locator('a.check_out');
 
 	private readonly emptyCart = this.page.locator('#empty_cart p', { hasText: 'Cart is empty!' });
 
@@ -25,6 +26,11 @@ export class CartPage extends BasePage {
 			.getByRole('row', { name: `${productName}` })
 			.locator('.cart_quantity_delete')
 			.click();
+	}
+
+	@step()
+	async clickProceedCheckout(): Promise<void> {
+		await this.proceedBtn.click();
 	}
 
 	@step()

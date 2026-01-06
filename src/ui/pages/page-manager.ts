@@ -9,6 +9,7 @@ import { ProductsPage } from '@/ui/pages/product/products.page';
 import { ProductPage } from '@/ui/pages/product/product.page';
 import { CartPage } from '@/ui/pages/cart/cart.page';
 import { CartModal } from '@/ui/pages/components/cart-modal.component';
+import { CheckoutPage } from '@/ui/pages/cart/checkout.page';
 
 export class PageManager {
 	private _home?: HomePage;
@@ -21,6 +22,7 @@ export class PageManager {
 	private _product?: ProductPage;
 	private _cart?: CartPage;
 	private _cartModal?: CartModal;
+	private _checkout?: CheckoutPage;
 	constructor(private page: Page) {}
 
 	get home(): HomePage {
@@ -52,5 +54,8 @@ export class PageManager {
 	}
 	get cartModal(): CartModal {
 		return (this._cartModal ??= new CartModal(this.page));
+	}
+	get checkout(): CheckoutPage {
+		return (this._checkout ??= new CheckoutPage(this.page));
 	}
 }
