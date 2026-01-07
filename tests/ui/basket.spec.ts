@@ -1,5 +1,5 @@
 import { test } from '@/ui/fixtures/index';
-import { ProductInfo } from '@/ui/pages/product/products.page';
+import { ProductInfo } from '@/ui/types/product.types';
 import { PageManager } from '@/ui/pages/page-manager';
 
 test(
@@ -23,7 +23,7 @@ test(
 		await pages.product.addToCart(1);
 		await pages.cartModal.openCart();
 		await pages.cart.isLoaded();
-		await pages.cart.assertCartIsCorrect([
+		await pages.cart.validateCartItems([
 			{ name: firstProduct.name, price: firstProduct.price, quantity: 3 },
 			{ name: secondProduct.name, price: secondProduct.price, quantity: 1 },
 		]);
@@ -51,7 +51,7 @@ test.describe('Basket', () => {
 		await pages.cart.open();
 		await pages.cart.isLoaded();
 
-		await pages.cart.assertCartIsCorrect([
+		await pages.cart.validateCartItems([
 			{ name: firstProduct.name, price: firstProduct.price, quantity: 1 },
 			{ name: secondProduct.name, price: secondProduct.price, quantity: 1 },
 		]);
