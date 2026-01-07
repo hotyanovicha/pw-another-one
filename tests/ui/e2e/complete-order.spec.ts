@@ -14,7 +14,7 @@ test('E2E: New User: Complete order with valid card', { tag: '@P1' }, async ({ n
 	await pages.products.addToCart(secondProduct.index);
 	await pages.cartModal.openCart();
 
-	await pages.cart.assertCartIsCorrect([
+	await pages.cart.validateCartItems([
 		{ name: firstProduct.name, price: firstProduct.price, quantity: 1 },
 		{ name: secondProduct.name, price: secondProduct.price, quantity: 1 },
 	]);

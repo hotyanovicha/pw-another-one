@@ -1,8 +1,8 @@
 import { toNumber } from './convert-data';
 import { Locator } from '@playwright/test';
 
-export function rowByName(rows: Locator, productNameLink: Locator, name: string): Locator {
-	return rows.filter({ has: productNameLink.filter({ hasText: name }) }).first();
+export function rowByName(rows: Locator, name: string): Locator {
+	return rows.filter({ hasText: name }).first();
 }
 
 export async function getRowPrice(row: Locator): Promise<number> {
