@@ -6,24 +6,24 @@ test(
 	'Basket: Add products with different quantities and verify prices, quantities, line totals',
 	{ tag: '@P1' },
 	async ({ newUserPages }) => {
-		const { pages } = newUserPages;
+		const { newUser } = newUserPages;
 
-		await pages.products.open();
-		await pages.products.isLoaded();
-		await pages.products.assertProductsExist();
-		await pages.products.openProductPage(0);
-		await pages.product.isLoaded();
-		const firstProduct = await pages.product.getProductInfo();
-		await pages.product.addToCart(3);
-		await pages.cartModal.continueShopping();
-		await pages.product.clickBack();
-		await pages.products.openProductPage();
-		await pages.product.isLoaded();
-		const secondProduct = await pages.product.getProductInfo();
-		await pages.product.addToCart(1);
-		await pages.cartModal.openCart();
-		await pages.cart.isLoaded();
-		await pages.cart.validateCartItems([
+		await newUser.products.open();
+		await newUser.products.isLoaded();
+		await newUser.products.assertProductsExist();
+		await newUser.products.openProductPage(0);
+		await newUser.product.isLoaded();
+		const firstProduct = await newUser.product.getProductInfo();
+		await newUser.product.addToCart(3);
+		await newUser.cartModal.continueShopping();
+		await newUser.product.clickBack();
+		await newUser.products.openProductPage();
+		await newUser.product.isLoaded();
+		const secondProduct = await newUser.product.getProductInfo();
+		await newUser.product.addToCart(1);
+		await newUser.cartModal.openCart();
+		await newUser.cart.isLoaded();
+		await newUser.cart.validateCartItems([
 			{ name: firstProduct.name, price: firstProduct.price, quantity: 3 },
 			{ name: secondProduct.name, price: secondProduct.price, quantity: 1 },
 		]);
@@ -36,22 +36,22 @@ test.describe('Basket', () => {
 	let cartWithProducts: PageManager;
 
 	test.beforeEach(async ({ newUserPages }) => {
-		const { pages } = newUserPages;
-		cartWithProducts = pages;
+		const { newUser } = newUserPages;
+		cartWithProducts = newUser;
 
-		await pages.products.open();
-		await pages.products.isLoaded();
-		firstProduct = await pages.products.selectProduct(0);
-		await pages.products.addToCart(firstProduct.index);
-		await pages.cartModal.continueShopping();
-		secondProduct = await pages.products.selectProduct();
-		await pages.products.addToCart(secondProduct.index);
-		await pages.cartModal.continueShopping();
+		await newUser.products.open();
+		await newUser.products.isLoaded();
+		firstProduct = await newUser.products.selectProduct(0);
+		await newUser.products.addToCart(firstProduct.index);
+		await newUser.cartModal.continueShopping();
+		secondProduct = await newUser.products.selectProduct();
+		await newUser.products.addToCart(secondProduct.index);
+		await newUser.cartModal.continueShopping();
 
-		await pages.cart.open();
-		await pages.cart.isLoaded();
+		await newUser.cart.open();
+		await newUser.cart.isLoaded();
 
-		await pages.cart.validateCartItems([
+		await newUser.cart.validateCartItems([
 			{ name: firstProduct.name, price: firstProduct.price, quantity: 1 },
 			{ name: secondProduct.name, price: secondProduct.price, quantity: 1 },
 		]);
