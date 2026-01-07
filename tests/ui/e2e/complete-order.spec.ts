@@ -14,18 +14,17 @@ test('E2E: New User: Complete order with valid card', { tag: '@P1' }, async ({ n
 	await pages.products.addToCart(secondProduct.index);
 	await pages.cartModal.openCart();
 
-	await pages.cart.validateCartItems([
+	const expectedCartItems = [
 		{ name: firstProduct.name, price: firstProduct.price, quantity: 1 },
 		{ name: secondProduct.name, price: secondProduct.price, quantity: 1 },
-	]);
+	];
+
+	await pages.cart.validateCartItems(expectedCartItems);
 
 	await pages.cart.clickProceedCheckout();
 	await pages.checkout.isLoaded();
 	await pages.checkout.assertAddress(user);
-	const cartTotal = await pages.checkout.validateCartItems([
-		{ name: firstProduct.name, price: firstProduct.price, quantity: 1 },
-		{ name: secondProduct.name, price: secondProduct.price, quantity: 1 },
-	]);
+	const cartTotal = await pages.checkout.validateCartItems(expectedCartItems);
 	await pages.checkout.assertCartTotal(cartTotal);
 	await pages.checkout.clickPlaceOrder();
 
