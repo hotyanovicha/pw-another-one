@@ -76,6 +76,52 @@ Use Read tool to view complete files mentioned in the diff.
 - [ ] **Proper return types** - TypeScript types are explicit and useful
 - [ ] **Async/await used correctly** - no unnecessary awaits, proper error handling
 
+**Code Style:**
+- [ ] **No redundant assignments** - don't assign parameter to new variable of same type (e.g., `const userData = user` when `user` is already typed)
+- [ ] **No unnecessary intermediate variables** - use parameters directly when no transformation needed
+- [ ] **Consistent access modifiers** - follow base class patterns (e.g., `protected` for `uniqueElement` if BasePage uses `protected`)
+- [ ] **No shadowing** - avoid variable names that shadow outer scope variables
+- [ ] **No duplicated assertion blocks** - extract repeated assertions into private helper methods (e.g., same assertions for delivery/invoice address → `assertAddressBlock(locator, data)`)
+- [ ] **Use template literals** - prefer `` `${a} ${b}` `` over `a + ' ' + b` for string concatenation
+
+**Types & Constants Organization:**
+
+*This is a tricky area with multiple valid approaches. Flag for discussion when patterns are inconsistent.*
+
+Where types should live:
+- [ ] **Shared types in `src/ui/types/`** - types used across multiple pages (e.g., `CartItem` used in cart.page.ts AND checkout.page.ts → extract to `types/cart.types.ts`)
+- [ ] **No duplicate type definitions** - same type defined in multiple files is a red flag; search for duplicates
+- [ ] **Page-specific types can stay in page files** - if a type is ONLY used in one page, it can stay there
+- [ ] **Derived types stay with constants** - when type uses `typeof CONSTANT` (e.g., `type CreditCard = typeof CREDIT_CARDS[keyof typeof CREDIT_CARDS]`), keep them together in constants file - this is OK
+
+Constants organization:
+- [ ] **Constants in `test-data/constants/`** - test data like credit cards, URLs, timeouts
+- [ ] **Constants file = one domain** - `credit-card.ts` for cards, `urls.ts` for URLs, don't mix domains
+- [ ] **UPPER_CASE for constants** - `CREDIT_CARDS` not `creditCards`
+- [ ] **`as const` for literal types** - enables type inference from values
+
+Recommended structure:
+```
+src/ui/
+├── types/                      # Shared types
+│   ├── cart.types.ts           # CartItem, OrderItem
+│   ├── user.types.ts           # Person, Address
+│   └── index.ts                # Re-exports
+├── test-data/
+│   └── constants/              # Test data with derived types
+│       ├── credit-card.ts      # CREDIT_CARDS + CreditCard type (OK together)
+│       └── timeouts.ts         # TIMEOUTS
+└── pages/
+    └── cart/
+        └── cart.page.ts        # Imports from types/, no local CartItem
+```
+
+Red flags to catch:
+- Same interface/type defined in 2+ files → extract to shared types
+- Type in page file that's imported by another page → move to types/
+- Constants scattered across page files → consolidate to constants/
+- Mixing unrelated constants in one file → split by domain
+
 **Config Organization:**
 - [ ] **Environment configs are clean** - no hardcoded URLs/credentials in code
 - [ ] **Config structure makes sense** - easy to find and modify settings

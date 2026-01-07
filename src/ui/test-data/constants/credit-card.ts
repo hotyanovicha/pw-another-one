@@ -8,7 +8,7 @@ export const CREDIT_CARDS = {
 	invalid: {
 		number: '4000000000000002',
 		month: '12',
-		year: '2024',
+		year: '2029',
 		cvv: '123',
 	},
 } as const;
