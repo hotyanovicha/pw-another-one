@@ -102,6 +102,7 @@ jobs:
           CI: true
           BASE_URL: ${{ vars.BASE_URL }}
           HOME: /root
+          DOCKER_CONFIG: /tmp/.docker
         continue-on-error: true
 
       - name: Setup Pages

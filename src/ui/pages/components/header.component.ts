@@ -5,6 +5,7 @@ export class HeaderComponent {
 	private readonly homeLink = this.page.getByRole('link', { name: 'Home' });
 	private readonly userName = this.page.locator('a:has-text("Logged in as") b');
 	private readonly cartLink = this.page.getByRole('link', { name: 'Cart' });
+	private readonly logoutLink = this.page.getByRole('link', { name: 'Logout' });
 	constructor(private page: Page) {}
 
 	@step()
@@ -21,5 +22,15 @@ export class HeaderComponent {
 	@step()
 	async assertUserName(name: string): Promise<void> {
 		await expect(this.userName).toContainText(name);
+	}
+
+	@step()
+	async clickLogout(): Promise<void> {
+		await this.logoutLink.click();
+	}
+
+	@step()
+	async assertUserLoggedOut(): Promise<void> {
+		await expect(this.userName).toHaveCount(0);
 	}
 }
