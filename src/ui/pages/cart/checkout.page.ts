@@ -15,10 +15,15 @@ export class CheckoutPage extends BasePage {
 	private readonly address_delivery = this.page.locator('#address_delivery');
 	private readonly address_invoice = this.page.locator('#address_invoice');
 
-	private readonly rows = this.page.locator('#cart_info tbody tr');
-	private readonly totalText = this.page.locator('.cart_total_price');
+	private readonly rows = this.page
+		.locator('#cart_info tbody tr[id]')
+		.filter({ has: this.page.locator('.cart_product') });
+	private readonly totalText = this.page
+		.locator('#cart_info tbody tr')
+		.filter({ hasText: 'Total Amount' })
+		.locator('.cart_total_price');
 
-	private readonly placeOrderBtn = this.page.locator('a.btn.btn-success', { hasText: 'Place Order' });
+	private readonly placeOrderBtn = this.page.getByRole('link', { name: 'Place Order' });
 
 	@step()
 	async assertAddress(user: Person): Promise<void> {
@@ -44,7 +49,7 @@ export class CheckoutPage extends BasePage {
 	}
 
 	@step()
-	async assertOrderProducts(expected: CartItem[]): Promise<void> {
+	async assertOrderProducts(expected: CartItem[]): Promise<string> {
 		await expect(this.rows.first()).toBeVisible();
 		await expect(this.rows).toHaveCount(expected.length);
 		let cartTotal = 0;
@@ -67,6 +72,7 @@ export class CheckoutPage extends BasePage {
 		}
 		const totalCart = (await this.totalText.innerText()).trim();
 		expect.soft(this.toNumber(totalCart), { message: `Total cart amount should be ${cartTotal}` }).toBe(cartTotal);
+		return this.toNumber(totalCart).toString();
 	}
 
 	@step()
