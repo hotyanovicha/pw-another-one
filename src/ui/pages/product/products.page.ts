@@ -2,12 +2,7 @@ import { expect } from '@playwright/test';
 import { BasePage } from '@/ui/pages/base.page';
 import { step } from '@/utils/step.decorator';
 import { ProductPage } from './product.page';
-
-export type ProductInfo = {
-	name: string;
-	price: number;
-	index: number;
-};
+import { ProductInfo } from '@/ui/types/product.types';
 
 export class ProductsPage extends BasePage {
 	protected readonly uniqueElement = this.page.getByRole('heading', { name: 'All Products' });

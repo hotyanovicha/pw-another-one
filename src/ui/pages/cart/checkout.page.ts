@@ -2,15 +2,12 @@ import { BasePage } from '@/ui/pages/base.page';
 import { step } from '@/utils/step.decorator';
 import { Person } from '@/utils/person.factory';
 import { expect, Locator } from '@playwright/test';
-
-type CartItem = {
-	name: string;
-	price: number;
-	quantity: number;
-};
+import { CartItem } from '@/ui/types/cart.types';
+import { toNumber } from '@/utils/convert-data';
+import { rowByName, getRowPrice, getRowQuantity, getRowLineTotal } from '@/utils/table';
 
 export class CheckoutPage extends BasePage {
-	public readonly uniqueElement = this.page.locator('h2.heading', { hasText: 'Address Details' });
+	protected readonly uniqueElement = this.page.locator('h2.heading', { hasText: 'Address Details' });
 
 	private readonly address_delivery = this.page.locator('#address_delivery');
 	private readonly address_invoice = this.page.locator('#address_invoice');
@@ -23,44 +20,29 @@ export class CheckoutPage extends BasePage {
 		.filter({ hasText: 'Total Amount' })
 		.locator('.cart_total_price');
 
+	private readonly productNameLink = this.page.locator('td.cart_description a');
+
 	private readonly placeOrderBtn = this.page.getByRole('link', { name: 'Place Order' });
 
 	@step()
 	async assertAddress(user: Person): Promise<void> {
-		const userData = user;
-		const fullName = userData.title + ' ' + userData.firstName + ' ' + userData.lastName;
-		const fullAddress = userData.city + ' ' + userData.state + ' ' + userData.zipcode;
-
-		await expect.soft(this.address_delivery.getByText(fullName)).toBeVisible();
-		await expect.soft(this.address_delivery.getByText(userData.company)).toBeVisible();
-		await expect.soft(this.address_delivery.getByText(userData.address1)).toBeVisible();
-		await expect.soft(this.address_delivery.getByText(userData.address2)).toBeVisible();
-		await expect.soft(this.address_delivery.getByText(fullAddress)).toBeVisible();
-		await expect.soft(this.address_delivery.getByText(userData.country)).toBeVisible();
-		await expect.soft(this.address_delivery.getByText(userData.mobile)).toBeVisible();
-
-		await expect.soft(this.address_invoice.getByText(fullName)).toBeVisible();
-		await expect.soft(this.address_invoice.getByText(userData.company)).toBeVisible();
-		await expect.soft(this.address_invoice.getByText(userData.address1)).toBeVisible();
-		await expect.soft(this.address_invoice.getByText(userData.address2)).toBeVisible();
-		await expect.soft(this.address_invoice.getByText(fullAddress)).toBeVisible();
-		await expect.soft(this.address_invoice.getByText(userData.country)).toBeVisible();
-		await expect.soft(this.address_invoice.getByText(userData.mobile)).toBeVisible();
+		await this.assertAddressBlock(this.address_delivery, user);
+		await this.assertAddressBlock(this.address_invoice, user);
 	}
 
 	@step()
-	async assertOrderProducts(expected: CartItem[]): Promise<string> {
+	async validateCartItems(expected: CartItem[]): Promise<number> {
 		await expect(this.rows.first()).toBeVisible();
 		await expect(this.rows).toHaveCount(expected.length);
 		let cartTotal = 0;
 
 		for (const item of expected) {
-			const row = this.rowByName(item.name);
+			const row = rowByName(this.rows, this.productNameLink, item.name);
 			await expect(row).toBeVisible();
 
-			const uiPrice = await this.getRowPrice(row);
-			const uiQty = await this.getRowQuantity(row);
-			const uiLineTotal = await this.getRowLineTotal(row);
+			const uiPrice = await getRowPrice(row);
+			const uiQty = await getRowQuantity(row);
+			const uiLineTotal = await getRowLineTotal(row);
 
 			expect.soft(uiPrice, { message: `Price for "${item.name}" should be ${item.price}` }).toBe(item.price);
 			expect.soft(uiQty, { message: `Quantity for "${item.name}" should be ${item.quantity}` }).toBe(item.quantity);
@@ -70,9 +52,7 @@ export class CheckoutPage extends BasePage {
 
 			cartTotal += uiLineTotal;
 		}
-		const totalCart = (await this.totalText.innerText()).trim();
-		expect.soft(this.toNumber(totalCart), { message: `Total cart amount should be ${cartTotal}` }).toBe(cartTotal);
-		return this.toNumber(totalCart).toString();
+		return cartTotal;
 	}
 
 	@step()
@@ -80,26 +60,23 @@ export class CheckoutPage extends BasePage {
 		await this.placeOrderBtn.click();
 	}
 
-	private rowByName(name: string): Locator {
-		return this.rows.filter({ has: this.page.locator('td.cart_description a', { hasText: name }) }).first();
+	private async assertAddressBlock(block: Locator, user: Person): Promise<void> {
+		const fullName = `${user.title} ${user.firstName} ${user.lastName}`;
+		const fullAddress = `${user.city} ${user.state} ${user.zipcode}`;
+
+		await expect.soft(block.getByText(fullName)).toBeVisible();
+		await expect.soft(block.getByText(user.company)).toBeVisible();
+		await expect.soft(block.getByText(user.address1)).toBeVisible();
+		await expect.soft(block.getByText(user.address2)).toBeVisible();
+		await expect.soft(block.getByText(fullAddress)).toBeVisible();
+		await expect.soft(block.getByText(user.country)).toBeVisible();
+		await expect.soft(block.getByText(user.mobile)).toBeVisible();
 	}
 
-	private async getRowPrice(row: Locator): Promise<number> {
-		const text = (await row.locator('td.cart_price p').innerText()).trim();
-		return this.toNumber(text);
-	}
-
-	private async getRowQuantity(row: Locator): Promise<number> {
-		const text = (await row.locator('td.cart_quantity button.disabled').innerText()).trim();
-		return this.toNumber(text);
-	}
-
-	private async getRowLineTotal(row: Locator): Promise<number> {
-		const text = (await row.locator('td.cart_total p.cart_total_price').innerText()).trim();
-		return this.toNumber(text);
-	}
-
-	private toNumber(text: string): number {
-		return Number(text.replace(/[^\d]/g, '')) || 0;
+	@step()
+	async assertCartTotal(expected: number): Promise<void> {
+		expect
+			.soft(toNumber(await this.totalText.innerText()), { message: `Total cart amount should be ${expected}` })
+			.toBe(expected);
 	}
 }

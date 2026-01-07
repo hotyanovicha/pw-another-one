@@ -1,7 +1,7 @@
 import { BasePage } from '@/ui/pages/base.page';
 import { step } from '@/utils/step.decorator';
 import { expect } from '@playwright/test';
-import { ProductInfo } from './products.page';
+import { ProductInfo } from '@/ui/types/product.types';
 
 export class ProductPage extends BasePage {
 	protected readonly uniqueElement = this.page.locator('.product-details');
@@ -20,15 +20,12 @@ export class ProductPage extends BasePage {
 	}
 
 	@step()
-	async getProductInfo(): Promise<{
-		name: string;
-		price: number;
-	}> {
+	async getProductInfo(): Promise<ProductInfo> {
 		await expect(this.productInfo).toBeVisible();
 		const name = (await this.productName.textContent())?.trim() ?? '';
 		const priceRaw = (await this.productPriceText.first().textContent())?.trim() ?? '';
 		const price = Number(priceRaw.replace(/[^\d]/g, ''));
-		return { name: name, price: price };
+		return { name: name, price: price, index: 0 };
 	}
 
 	@step()

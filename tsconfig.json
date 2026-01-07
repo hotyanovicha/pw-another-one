@@ -18,7 +18,9 @@
       "@/utils/*": ["src/utils/*"],
       "@/ui/pages/*": ["src/ui/pages/*"],
       "@/ui/fixtures/*": ["src/ui/fixtures/*"],
-      "@/ui/test-data/*": ["src/ui/test-data/*"]
+      "@/ui/test-data/*": ["src/ui/test-data/*"],
+      "@/ui/types/*": ["src/ui/types/*"],
+      "@/ui/test-data/constants/*": ["src/ui/test-data/constants/*"]
     }
   },
   "include": ["tests/**/*.ts", "playwright.config.ts", "src/**/*.ts"],

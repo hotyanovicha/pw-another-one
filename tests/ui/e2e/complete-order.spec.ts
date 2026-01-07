@@ -22,10 +22,11 @@ test('E2E: New User: Complete order with valid card', { tag: '@P1' }, async ({ n
 	await pages.cart.clickProceedCheckout();
 	await pages.checkout.isLoaded();
 	await pages.checkout.assertAddress(user);
-	const totalAmount = await pages.checkout.assertOrderProducts([
+	const cartTotal = await pages.checkout.validateCartItems([
 		{ name: firstProduct.name, price: firstProduct.price, quantity: 1 },
 		{ name: secondProduct.name, price: secondProduct.price, quantity: 1 },
 	]);
+	await pages.checkout.assertCartTotal(cartTotal);
 	await pages.checkout.clickPlaceOrder();
 
 	await pages.payment.isLoaded();
@@ -34,8 +35,8 @@ test('E2E: New User: Complete order with valid card', { tag: '@P1' }, async ({ n
 
 	await pages.payment.assertOrderPlaced();
 	const invoice = await pages.payment.clickDownloadInvoice();
-	const fullUserName = user.firstName + ' ' + user.lastName;
-	await pages.payment.assertInvoiceValid(invoice, { customer: fullUserName, amount: totalAmount });
+	const fullUserName = `${user.firstName} ${user.lastName}`;
+	await pages.payment.assertInvoiceValid(invoice, { customer: fullUserName, amount: cartTotal });
 
 	await pages.payment.clickContinue();
 	await pages.home.isLoaded();

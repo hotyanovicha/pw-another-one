@@ -1,16 +1,13 @@
-import { expect, Locator } from '@playwright/test';
+import { expect } from '@playwright/test';
 import { BasePage } from '@/ui/pages/base.page';
 import { step } from '@/utils/step.decorator';
-
-type CartItem = {
-	name: string;
-	price: number;
-	quantity: number;
-};
+import { CartItem } from '@/ui/types/cart.types';
+import { rowByName, getRowPrice, getRowQuantity, getRowLineTotal } from '@/utils/table';
 
 export class CartPage extends BasePage {
 	protected readonly uniqueElement = this.page.locator('section#cart_items');
 	private readonly rows = this.page.locator('#cart_info_table tbody tr');
+	private readonly productNameLink = this.page.locator('td.cart_description a');
 	private readonly proceedBtn = this.page.locator('a.check_out');
 
 	private readonly emptyCart = this.page.locator('#empty_cart p', { hasText: 'Cart is empty!' });
@@ -36,7 +33,7 @@ export class CartPage extends BasePage {
 	@step()
 	async assertProductDeleted(productName: string): Promise<void> {
 		await expect
-			.poll(async () => await this.rowByName(productName).count(), {
+			.poll(async () => await rowByName(this.rows, this.productNameLink, productName).count(), {
 				timeout: 5000,
 				message: `Expected "${productName}" to be removed from cart`,
 			})
@@ -54,12 +51,12 @@ export class CartPage extends BasePage {
 		await expect(this.rows).toHaveCount(expected.length);
 
 		for (const item of expected) {
-			const row = this.rowByName(item.name);
+			const row = rowByName(this.rows, this.productNameLink, item.name);
 			await expect(row).toBeVisible();
 
-			const uiPrice = await this.getRowPrice(row);
-			const uiQty = await this.getRowQuantity(row);
-			const uiLineTotal = await this.getRowLineTotal(row);
+			const uiPrice = await getRowPrice(row);
+			const uiQty = await getRowQuantity(row);
+			const uiLineTotal = await getRowLineTotal(row);
 
 			expect.soft(uiPrice, { message: `Price for "${item.name}" should be ${item.price}` }).toBe(item.price);
 			expect.soft(uiQty, { message: `Quantity for "${item.name}" should be ${item.quantity}` }).toBe(item.quantity);
@@ -67,28 +64,5 @@ export class CartPage extends BasePage {
 				.soft(uiLineTotal, { message: `Line total for "${item.name}" should be ${item.price * item.quantity}` })
 				.toBe(item.price * item.quantity);
 		}
-	}
-
-	private rowByName(name: string): Locator {
-		return this.rows.filter({ has: this.page.locator('td.cart_description a', { hasText: name }) }).first();
-	}
-
-	private async getRowPrice(row: Locator): Promise<number> {
-		const text = (await row.locator('td.cart_price p').innerText()).trim();
-		return this.toNumber(text);
-	}
-
-	private async getRowQuantity(row: Locator): Promise<number> {
-		const text = (await row.locator('td.cart_quantity button.disabled').innerText()).trim();
-		return this.toNumber(text);
-	}
-
-	private async getRowLineTotal(row: Locator): Promise<number> {
-		const text = (await row.locator('td.cart_total p.cart_total_price').innerText()).trim();
-		return this.toNumber(text);
-	}
-
-	private toNumber(text: string): number {
-		return Number(text.replace(/[^\d]/g, '')) || 0;
 	}
 }
