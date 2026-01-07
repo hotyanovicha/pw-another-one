@@ -205,6 +205,9 @@ Red flags to catch:
 - Public locators used for assertion flexibility
 - Generic assertion helpers (e.g., `assertElementVisible(locator)`)
 - Trade-offs between encapsulation and pragmatism
+- Type defined in page file that might be shared later - ask: "Will other pages need this?"
+- Constants with derived types - verify `as const` is used for type inference
+- Helper methods that could be private but are public - intentional or oversight?
 
 ```markdown
 ## PR Review: [Title] (#[Number])
@@ -226,6 +229,12 @@ Critical issues that must be fixed.
 ### 👀 For Your Review
 Design decisions that may be intentional - verify they fit your context:
 - [pattern] at `file.ts:line` - [brief description]
+
+### 💡 Discussion Points
+Areas with multiple valid approaches - worth a team decision:
+- [topic] - Option A: [approach]. Option B: [approach]. Recommendation: [suggestion]
+
+*Common discussion topics: type location (page vs shared), helper extraction timing, assertion granularity*
 
 ### 📝 Git Hygiene
 **PR title:** `Current` → `Suggested improvement`
