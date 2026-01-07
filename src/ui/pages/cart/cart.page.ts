@@ -14,7 +14,7 @@ export class CartPage extends BasePage {
 
 	private readonly emptyCart = this.page.locator('#empty_cart p', { hasText: 'Cart is empty!' });
 
-	private readonly orderTable = new OrderTable(this.page, this.rows);
+	private readonly orderTable = new OrderTable(this.rows);
 
 	@step()
 	async open(): Promise<void> {

@@ -1,14 +1,11 @@
 import { rowByName } from '@/utils/table';
-import { expect, Locator, Page } from '@playwright/test';
+import { expect, Locator } from '@playwright/test';
 import { step } from '@/utils/step.decorator';
 import { CartItem } from '@/ui/types/cart.types';
 import { getRowPrice, getRowQuantity, getRowLineTotal } from '@/utils/table';
 
 export class OrderTable {
-	constructor(
-		private page: Page,
-		private rows: Locator
-	) {}
+	constructor(private rows: Locator) {}
 
 	@step()
 	async validateCartItems(expected: CartItem[]): Promise<number> {

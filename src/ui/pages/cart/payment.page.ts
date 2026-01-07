@@ -2,7 +2,7 @@ import { BasePage } from '@/ui/pages/base.page';
 import { CreditCard } from '@/ui/test-data/constants/credit-card';
 import { step } from '@/utils/step.decorator';
 import { expect, Download } from '@playwright/test';
-import { faker } from '@faker-js/faker';
+import { Person } from '@/utils/person.factory';
 import { promises as fs } from 'fs';
 
 export class PaymentPage extends BasePage {
@@ -21,8 +21,8 @@ export class PaymentPage extends BasePage {
 	private readonly downloadInvoice = this.page.getByRole('link', { name: 'Download Invoice' });
 
 	@step()
-	async enterCreditCard(card: CreditCard): Promise<void> {
-		await this.cardName.fill(`${faker.person.firstName()} ${faker.person.lastName()}`);
+	async enterCreditCard(card: CreditCard, user: Person): Promise<void> {
+		await this.cardName.fill(`${user.firstName} ${user.lastName}`);
 		await this.cardNumber.fill(card.number);
 		await this.cardCvc.fill(card.cvv);
 		await this.cardExpiryMonth.fill(card.month);
@@ -52,12 +52,12 @@ export class PaymentPage extends BasePage {
 	}
 
 	@step()
-	async assertInvoiceValid(download: Download, expected: { customer: string; amount: number }): Promise<void> {
+	async assertInvoiceValid(download: Download, expected: { customer: Person; amount: number }): Promise<void> {
 		const filePath = await download.path();
 		expect(filePath).toBeTruthy();
 
 		const content = await fs.readFile(filePath!, 'utf-8');
-		expect.soft(content).toContain(expected.customer);
+		expect.soft(content).toContain('${expected.customer.firstName} ${expected.customer.lastName}');
 		expect.soft(content).toContain(expected.amount.toString());
 	}
 }

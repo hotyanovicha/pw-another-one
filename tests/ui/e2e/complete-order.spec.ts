@@ -29,13 +29,12 @@ test('E2E: New User: Complete order with valid card', { tag: '@P1' }, async ({ n
 	await pages.checkout.clickPlaceOrder();
 
 	await pages.payment.isLoaded();
-	await pages.payment.enterCreditCard(CREDIT_CARDS.valid);
+	await pages.payment.enterCreditCard(CREDIT_CARDS.valid, user);
 	await pages.payment.clickPayConfirm();
 
 	await pages.payment.assertOrderPlaced();
 	const invoice = await pages.payment.clickDownloadInvoice();
-	const fullUserName = `${user.firstName} ${user.lastName}`;
-	await pages.payment.assertInvoiceValid(invoice, { customer: fullUserName, amount: cartTotal });
+	await pages.payment.assertInvoiceValid(invoice, { customer: user, amount: cartTotal });
 
 	await pages.payment.clickContinue();
 	await pages.home.isLoaded();

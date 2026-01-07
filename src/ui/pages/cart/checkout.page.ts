@@ -22,7 +22,7 @@ export class CheckoutPage extends BasePage {
 
 	private readonly placeOrderBtn = this.page.getByRole('link', { name: 'Place Order' });
 
-	private readonly orderTable = new OrderTable(this.page, this.rows);
+	private readonly orderTable = new OrderTable(this.rows);
 
 	@step()
 	async assertAddress(user: Person): Promise<void> {
