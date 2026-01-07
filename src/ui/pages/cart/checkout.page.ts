@@ -34,9 +34,17 @@ export class CheckoutPage extends BasePage {
 	async clickPlaceOrder(): Promise<void> {
 		await this.placeOrderBtn.click();
 	}
+
 	@step()
 	async validateCartItems(expected: CartItem[]): Promise<number> {
 		return await this.orderTable.validateCartItems(expected);
+	}
+
+	@step()
+	async assertCartTotal(expected: number): Promise<void> {
+		expect
+			.soft(toNumber(await this.totalText.innerText()), { message: `Total cart amount should be ${expected}` })
+			.toBe(expected);
 	}
 
 	private async assertAddressBlock(block: Locator, user: Person): Promise<void> {
@@ -50,12 +58,5 @@ export class CheckoutPage extends BasePage {
 		await expect.soft(block.getByText(fullAddress)).toBeVisible();
 		await expect.soft(block.getByText(user.country)).toBeVisible();
 		await expect.soft(block.getByText(user.mobile)).toBeVisible();
-	}
-
-	@step()
-	async assertCartTotal(expected: number): Promise<void> {
-		expect
-			.soft(toNumber(await this.totalText.innerText()), { message: `Total cart amount should be ${expected}` })
-			.toBe(expected);
 	}
 }

@@ -57,7 +57,7 @@ export class PaymentPage extends BasePage {
 		expect(filePath).toBeTruthy();
 
 		const content = await fs.readFile(filePath!, 'utf-8');
-		expect.soft(content).toContain('${expected.customer.firstName} ${expected.customer.lastName}');
+		expect.soft(content).toContain(`${expected.customer.firstName} ${expected.customer.lastName}`);
 		expect.soft(content).toContain(expected.amount.toString());
 	}
 }
