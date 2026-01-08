@@ -46,7 +46,7 @@ test('Authentication: User logout', { tag: '@P1' }, async ({ newUserPages }) => 
 });
 
 test(
-	'Authentication: Sigin popup appears after proceed to checkout',
+	'Authentication: Signin popup appears after proceed to checkout',
 	{ tag: '@P2' },
 	async ({ pages, newUserPages }) => {
 		const { user: newUser } = newUserPages;
