@@ -39,39 +39,38 @@ test('Authentication: Login with Registered User', { tag: '@P1' }, async ({ page
 	await pages.header.assertUserName(newUser.name);
 });
 
-test('Authentication: User logout', async ({ newUserPages }) => {
-	const { user: newUser } = newUserPages;
-
-	await newUserPages.pages.home.isLoaded();
-	await newUserPages.pages.header.assertUserName(newUser.name);
-	await newUserPages.pages.products.open();
-	await newUserPages.pages.products.isLoaded();
-
+test('Authentication: User logout', { tag: '@P1' }, async ({ newUserPages }) => {
 	await newUserPages.pages.header.clickLogout();
 	await newUserPages.pages.loginSignupPage.isLoaded();
 	await newUserPages.pages.header.assertUserLoggedOut();
-
-	await newUserPages.pages.products.open();
-	await newUserPages.pages.products.isLoaded();
-	const firstProduct = await newUserPages.pages.products.selectProduct();
-	await newUserPages.pages.products.addToCart(firstProduct.index);
-	await newUserPages.pages.cartModal.openCart();
-	await newUserPages.pages.cart.isLoaded();
-	await newUserPages.pages.cart.clickProceedCheckout();
-	await newUserPages.pages.checkoutModal.isLoaded();
-	await newUserPages.pages.checkoutModal.assertRegisterLink();
-
-	await newUserPages.pages.checkoutModal.openRegisterLink();
-	await newUserPages.pages.loginSignupPage.isLoaded();
-	await newUserPages.pages.loginSignupPage.login(newUser.email, newUser.password);
-	await newUserPages.pages.header.assertUserName(newUser.name);
-	await newUserPages.pages.header.clickLogout();
-	await newUserPages.pages.loginSignupPage.isLoaded();
-	await newUserPages.pages.header.assertUserLoggedOut();
-	await newUserPages.pages.home.clickBack();
-	await newUserPages.pages.header.assertUserLoggedOut();
-	await newUserPages.pages.cart.open();
-	await newUserPages.pages.cart.isLoaded();
-	await newUserPages.pages.cart.clickProceedCheckout();
-	await newUserPages.pages.checkoutModal.isLoaded();
 });
+
+test(
+	'Authentication: Sigin popup appears after proceed to checkout',
+	{ tag: '@P2' },
+	async ({ pages, newUserPages }) => {
+		const { user: newUser } = newUserPages;
+
+		await pages.products.open();
+		await pages.products.isLoaded();
+		const firstProduct = await pages.products.selectProduct();
+		await pages.products.addToCart(firstProduct.index);
+		await pages.cartModal.openCart();
+		await pages.cart.isLoaded();
+		await pages.cart.clickProceedCheckout();
+		await pages.checkoutModal.isLoaded();
+		await pages.checkoutModal.openRegisterLink();
+		await pages.loginSignupPage.isLoaded();
+		await pages.loginSignupPage.login(newUser.email, newUser.password);
+		await pages.header.assertUserName(newUser.name);
+		await pages.header.clickLogout();
+		await pages.loginSignupPage.isLoaded();
+		await pages.header.assertUserLoggedOut();
+		await pages.home.clickBack();
+		await pages.header.assertUserLoggedOut();
+		await pages.cart.open();
+		await pages.cart.isLoaded();
+		await pages.cart.clickProceedCheckout();
+		await pages.checkoutModal.isLoaded();
+	}
+);
