@@ -58,6 +58,50 @@ Use Read tool to view complete files mentioned in the diff.
 - [ ] **No hardcoded magic values** - data is meaningful and traceable
 
 #### Code Quality & Architecture
+
+**File & Folder Organization:**
+
+*Consistent structure makes the codebase navigable and predictable.*
+
+File naming conventions:
+- [ ] **kebab-case for all files** - `checkout.page.ts`, not `CheckoutPage.ts` or `checkout_page.ts`
+- [ ] **Suffix indicates purpose:**
+  - `.page.ts` - page objects (`cart.page.ts`, `payment.page.ts`)
+  - `.component.ts` - reusable UI components (`header.component.ts`, `order-table.component.ts`)
+  - `.types.ts` - type definitions (`cart.types.ts`, `product.types.ts`)
+  - `.spec.ts` - test files (`complete-order.spec.ts`)
+  - `.fixture.ts` - test fixtures
+  - `.factory.ts` - data factories (`person.factory.ts`)
+- [ ] **No suffix for utilities** - `table.ts`, `convert-data.ts` (pure functions)
+
+Folder structure:
+- [ ] **Pages grouped by feature/domain:**
+  ```
+  src/ui/pages/
+  ├── cart/           # cart.page.ts, checkout.page.ts, payment.page.ts
+  ├── product/        # product.page.ts, products.page.ts
+  ├── auth/           # login.page.ts, signup.page.ts
+  └── components/     # Shared components (header, modals, tables)
+  ```
+- [ ] **Tests mirror source structure:**
+  ```
+  tests/ui/
+  ├── e2e/            # End-to-end flows (complete-order.spec.ts)
+  ├── cart/           # Cart-specific tests
+  └── product/        # Product-specific tests
+  ```
+- [ ] **Shared code in dedicated folders:**
+  - `src/ui/types/` - shared TypeScript types
+  - `src/ui/test-data/constants/` - test data constants
+  - `src/utils/` - utility functions
+
+Red flags to catch:
+- File without proper suffix (e.g., `Checkout.ts` instead of `checkout.page.ts`)
+- Page object in wrong folder (e.g., cart page in `product/` folder)
+- Component that should be in `components/` but is nested in a page folder
+- Test file not following `.spec.ts` convention
+- Mixed concerns in one folder (pages + utils + types together)
+
 **Naming Conventions:**
 - [ ] **Variables/methods follow conventions** - camelCase, descriptive, no abbreviations
 - [ ] **File names are consistent** - kebab-case, clear purpose
@@ -208,6 +252,8 @@ Red flags to catch:
 - Type defined in page file that might be shared later - ask: "Will other pages need this?"
 - Constants with derived types - verify `as const` is used for type inference
 - Helper methods that could be private but are public - intentional or oversight?
+- New folder created - does it fit the existing structure? Is it the right location?
+- File without standard suffix - intentional (utility) or missing convention?
 
 ```markdown
 ## PR Review: [Title] (#[Number])
