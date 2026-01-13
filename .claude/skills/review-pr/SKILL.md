@@ -118,6 +118,7 @@ Red flags to catch:
 - [ ] **Methods do one thing** - single responsibility
 - [ ] **No duplicate logic** - DRY principle applied where it makes sense
 - [ ] **Proper return types** - TypeScript types are explicit and useful
+- [ ] **Let TypeScript infer Promise types** - explicit `Promise<T>` only needed for custom return types
 - [ ] **Async/await used correctly** - no unnecessary awaits, proper error handling
 
 **Code Style:**

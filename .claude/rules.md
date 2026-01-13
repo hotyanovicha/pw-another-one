@@ -22,6 +22,9 @@
 - Tag tests with priority: `{ tag: '@P1' }` or `{ tag: '@P2' }`
 - Each test must be hermetic (no dependencies on other tests)
 
+### TypeScript
+- Let TypeScript infer Promise types - explicit `Promise<T>` only needed for custom return types
+
 ### Assertions
 - Use `expect.poll()` for async state changes with clear error messages
 - Prefer hard assertions for critical checks, soft assertions for multiple validations
