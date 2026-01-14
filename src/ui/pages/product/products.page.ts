@@ -20,7 +20,7 @@ export class ProductsPage extends BasePage {
 	private readonly searchBtn = this.page.locator('#submit_search');
 
 	@step()
-	async open(): Promise<void> {
+	async open() {
 		await this.page.goto('/products');
 	}
 
@@ -59,38 +59,38 @@ export class ProductsPage extends BasePage {
 	}
 
 	@step()
-	async addToCart(index: number): Promise<void> {
+	async addToCart(index: number) {
 		const selectedProduct = this.productCards.nth(index);
 		const addToCartBtn = selectedProduct.locator(this.addToCartButton);
 		await addToCartBtn.click();
 	}
 
 	@step()
-	async searchProduct(keyword?: string): Promise<void> {
+	async searchProduct(keyword?: string) {
 		await this.searchField.fill(keyword ?? '');
 		await this.searchBtn.click();
 	}
 
 	@step()
-	async assertSearchExist(): Promise<void> {
+	async assertSearchExist() {
 		await expect(this.searchField).toBeVisible();
 	}
 
 	@step()
-	async assertProductsExist(): Promise<void> {
+	async assertProductsExist() {
 		const countProducts = await this.viewProductLinks.count();
 		expect(countProducts).toBeGreaterThan(2);
 	}
 
 	@step()
-	async assertSearchResultsEmpty(): Promise<void> {
+	async assertSearchResultsEmpty() {
 		await expect(this.searchedProductsTitle).toBeVisible();
 		const countProducts = await this.productCards.all();
 		expect(countProducts.length).toBe(0);
 	}
 
 	@step()
-	async assertSearchResults(keyword: string): Promise<void> {
+	async assertSearchResults(keyword: string) {
 		const products = await this.productCards.all();
 		expect(products.length).toBeGreaterThan(0);
 		for (const product of products) {

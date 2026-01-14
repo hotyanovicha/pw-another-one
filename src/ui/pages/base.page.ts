@@ -7,29 +7,29 @@ export abstract class BasePage {
 	constructor(protected page: Page) {}
 
 	@step()
-	async goto(url: string): Promise<this> {
+	async goto(url: string) {
 		await this.page.goto(url);
 		return this;
 	}
 
 	@step()
-	async isLoaded(): Promise<this> {
+	async isLoaded() {
 		await expect(this.uniqueElement).toBeVisible();
 		return this;
 	}
 
 	@step()
-	async assertUrl(url: string): Promise<void> {
+	async assertUrl(url: string) {
 		await expect(this.page).toHaveURL(url);
 	}
 
 	@step()
-	async clickBack(): Promise<void> {
+	async clickBack() {
 		await this.page.goBack();
 	}
 
 	@step()
-	async assertElementVisible(locator: Locator): Promise<void> {
+	async assertElementVisible(locator: Locator) {
 		await expect(locator).toBeVisible();
 	}
 }

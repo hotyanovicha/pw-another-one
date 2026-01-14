@@ -25,14 +25,14 @@ export class SignupPage extends BasePage {
 	private readonly createAccountButton = this.page.getByRole('button', { name: 'Create Account' });
 
 	@step()
-	async isLoaded(): Promise<this> {
+	async isLoaded() {
 		await super.isLoaded();
 		await expect.soft(this.uniqueElement.getByRole('heading', { name: 'Enter Account Information' })).toBeVisible();
 		return this;
 	}
 
 	@step()
-	async fillForm(user: Person): Promise<void> {
+	async fillForm(user: Person) {
 		await this.page.getByRole('radio', { name: user.title }).click();
 		await this.name.fill(user.name);
 		await this.password.fill(user.password);
@@ -54,7 +54,7 @@ export class SignupPage extends BasePage {
 	}
 
 	@step()
-	async clickCreateAccountButton(): Promise<void> {
+	async clickCreateAccountButton() {
 		await this.createAccountButton.click();
 	}
 }
