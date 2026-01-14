@@ -7,7 +7,7 @@ import { AUTH_USER_COUNT } from '../../../playwright.config';
 type Fixtures = {
 	pages: PageManager;
 	userPages: PageManager;
-	newUserPages: { pages: PageManager; user: Person };
+	newUserPages: { newUser: PageManager; person: Person };
 };
 
 export const test = base.extend<Fixtures>({
@@ -28,28 +28,28 @@ export const test = base.extend<Fixtures>({
 	},
 
 	newUserPages: async ({ browser }, use) => {
-		const user = createPerson();
+		const person = createPerson();
 
 		const context = await browser.newContext();
 		await blockGoogleAds(context);
 		const page = await context.newPage();
-		const pages = new PageManager(page);
+		const newUser = new PageManager(page);
 
-		await pages.home.open();
-		await pages.consentDialog.acceptIfVisible();
-		await pages.home.clickSignupLoginLink();
-		await pages.loginSignupPage.isLoaded();
-		await pages.loginSignupPage.enterNameAndEmail(user.name, user.email);
-		await pages.loginSignupPage.clickSignupButton();
-		await pages.loginSignupPage.assertUrl('/signup');
-		await pages.signupPage.isLoaded();
-		await pages.signupPage.fillForm(user);
-		await pages.signupPage.clickCreateAccountButton();
-		await pages.accountCreatedPage.isLoaded();
-		await pages.accountCreatedPage.clickContinueButton();
-		await pages.header.isLoaded();
-		await pages.header.assertUserName(user.name);
-		await use({ pages, user });
+		await newUser.home.open();
+		await newUser.consentDialog.acceptIfVisible();
+		await newUser.home.clickSignupLoginLink();
+		await newUser.loginSignupPage.isLoaded();
+		await newUser.loginSignupPage.enterNameAndEmail(person.name, person.email);
+		await newUser.loginSignupPage.clickSignupButton();
+		await newUser.loginSignupPage.assertUrl('/signup');
+		await newUser.signupPage.isLoaded();
+		await newUser.signupPage.fillForm(person);
+		await newUser.signupPage.clickCreateAccountButton();
+		await newUser.accountCreatedPage.isLoaded();
+		await newUser.accountCreatedPage.clickContinueButton();
+		await newUser.header.isLoaded();
+		await newUser.header.assertUserName(person.name);
+		await use({ newUser, person });
 		await context.close();
 	},
 });
