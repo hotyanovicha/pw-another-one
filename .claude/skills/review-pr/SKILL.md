@@ -36,6 +36,7 @@ Use Read tool to view complete files mentioned in the diff.
 - [ ] **Assertions validate meaningful outcomes** - not just presence of elements
 
 #### Test Stability & Reliability
+- [ ] **User-Facing Locators** - prefer `getByRole`/`getByText` over CSS/XPath
 - [ ] **Selectors are resilient** - won't break on UI changes (use role, text, semantic HTML where possible)
 - [ ] **No race conditions** - proper waits for async operations
 - [ ] **No hard-coded waits** - `page.waitForTimeout()` is a red flag
@@ -48,11 +49,13 @@ Use Read tool to view complete files mentioned in the diff.
 #### Test Independence & Isolation
 - [ ] **Tests can run in any order** - no implicit dependencies between tests
 - [ ] **No shared mutable state** - each test creates its own data
+- [ ] **Statelessness** - no global variable modification
+- [ ] **Fixture Scoping** - use fixtures for setup/teardown (auth, seeding)
 - [ ] **Proper setup/teardown** - beforeEach/afterEach used correctly
 - [ ] **No test pollution** - one test's failure doesn't cascade
 
 #### Test Data Strategy
-- [ ] **Data creation strategy is clear** - factories vs fixtures vs inline
+- [ ] **Data creation strategy** - prefer Factories over hardcoded JSON
 - [ ] **Unique data per test/worker** - no conflicts in parallel
 - [ ] **Cleanup strategy defined** - how is test data removed?
 - [ ] **No hardcoded magic values** - data is meaningful and traceable
@@ -105,11 +108,12 @@ Red flags to catch:
 **Naming Conventions:**
 - [ ] **Variables/methods follow conventions** - camelCase, descriptive, no abbreviations
 - [ ] **File names are consistent** - kebab-case, clear purpose
-- [ ] **Test names are specific** - describe scenario and expected outcome
+- [ ] **Declarative Naming** - follow `should [outcome] when [scenario]` pattern
 - [ ] **Constants are UPPER_CASE** - configuration values, magic numbers extracted
 
 **Over-Engineering:**
 - [ ] **No premature abstraction** - don't create utilities for single use
+- [ ] **Avoid Hasty Abstractions (AHA)** - avoid complex helpers handling many cases
 - [ ] **No unnecessary complexity** - KISS principle, straightforward solutions
 - [ ] **No over-generic methods** - specific is better than flexible
 - [ ] **No unused code** - dead code removed, imports cleaned up
@@ -118,6 +122,7 @@ Red flags to catch:
 - [ ] **Methods do one thing** - single responsibility
 - [ ] **No duplicate logic** - DRY principle applied where it makes sense
 - [ ] **Proper return types** - TypeScript types are explicit and useful
+- [ ] **Strict Type Safety** - NO 'any' type, use generics/unknown
 - [ ] **Let TypeScript infer Promise types** - explicit `Promise<T>` only needed for custom return types
 - [ ] **Async/await used correctly** - no unnecessary awaits, proper error handling
 
@@ -138,8 +143,12 @@ Where types should live:
 - [ ] **No duplicate type definitions** - same type defined in multiple files is a red flag; search for duplicates
 - [ ] **Page-specific types can stay in page files** - if a type is ONLY used in one page, it can stay there
 - [ ] **Derived types stay with constants** - when type uses `typeof CONSTANT` (e.g., `type CreditCard = typeof CREDIT_CARDS[keyof typeof CREDIT_CARDS]`), keep them together in constants file - this is OK
+- [ ] **Utility Types used** - `Pick`, `Omit`, `Partial` for leaner types
+- [ ] **Interface Segregation** - functions take only needed data (e.g. `id` not `User` obj)
+- [ ] **No Enums** - prefer `as const` string unions
 
 Constants organization:
+- [ ] **Module Boundaries** - no circular refs or reaching into private folders
 - [ ] **Constants in `test-data/constants/`** - test data like credit cards, URLs, timeouts
 - [ ] **Constants file = one domain** - `credit-card.ts` for cards, `urls.ts` for URLs, don't mix domains
 - [ ] **UPPER_CASE for constants** - `CREDIT_CARDS` not `creditCards`
@@ -186,7 +195,12 @@ Red flags to catch:
 - [ ] **Screenshots/videos will be useful** - failures capture enough context
 
 #### Page Object Quality
-- [ ] **Abstractions make sense** - methods represent user actions, not implementation
+- [ ] **Single Responsibility (SRP)** - elements & interactions only, NO assertions
+- [ ] **Encapsulation** - private/protected locators, public action methods
+- [ ] **Action-Oriented Methods** - `submitForm` not `clickSubmit`
+- [ ] **Dependency Inversion** - injected via Fixtures (no `new Page(page)`)
+- [ ] **Component Composition** - use shared components (e.g. Header)
+- [ ] **Abstractions make sense** - methods represent user actions
 - [ ] **Not over-engineered** - simple, clear, maintainable
 - [ ] **Proper error handling** - failures are debuggable with clear messages
 
