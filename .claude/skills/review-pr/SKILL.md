@@ -217,12 +217,6 @@ Red flags to catch:
 - [ ] **New team member readable** - can someone understand this without context?
 - [ ] **Change impact is limited** - page object change doesn't break 50 tests
 
-#### Test Coverage & Gaps
-- [ ] **Negative scenarios covered** - what happens when things go wrong?
-- [ ] **Boundary conditions tested** - min/max values, empty states
-- [ ] **Error states handled** - network failures, validation errors
-- [ ] **Coverage gaps identified** - what important scenarios are NOT tested?
-
 #### Assertion Strategy
 - [ ] **Asserting the right things** - meaningful business outcomes
 - [ ] **Not over-asserting** - too many assertions = brittle tests
@@ -259,6 +253,7 @@ Red flags to catch:
 - Challenge decisions: "Why this approach? Is it necessary?"
 - Consider CI/CD: "Will this work reliably in pipeline?"
 - Assess risk: "What could this break? What's not covered?"
+- **DO NOT include "Test Coverage Analysis" section** - this will be handled by a separate agent
 
 **Patterns to flag for extra review (not issues, just note them):**
 - Public locators used for assertion flexibility
