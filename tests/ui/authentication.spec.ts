@@ -42,8 +42,8 @@ test('Authentication: User can logout', { tag: '@P1' }, async ({ newUserPages })
 	await newUser.header.assertUserLoggedOut();
 });
 
-test('Authentication: Checkout requires authentication when logged out', { tag: '@P1' }, async ({ newUserPages }) => {
-	const { newUser } = newUserPages;
+test('Authentication: User can re-login from checkout modal', { tag: '@P1' }, async ({ newUserPages }) => {
+	const { newUser, person } = newUserPages;
 
 	await newUser.header.clickLogout();
 	await newUser.header.assertUserLoggedOut();
@@ -60,22 +60,7 @@ test('Authentication: Checkout requires authentication when logged out', { tag: 
 	await newUser.checkoutModal.isLoaded();
 	await newUser.checkoutModal.openRegisterLink();
 	await newUser.loginSignupPage.isLoaded();
-});
 
-test('Authentication: User can re-login from checkout modal', { tag: '@P1' }, async ({ newUserPages }) => {
-	const { newUser, person } = newUserPages;
-
-	await newUser.header.clickLogout();
-
-	await newUser.products.open();
-	const firstProduct = await newUser.products.selectProduct();
-	await newUser.products.addToCart(firstProduct.index);
-	await newUser.cartModal.openCart();
-	await newUser.cart.clickProceedCheckout();
-
-	await newUser.checkoutModal.isLoaded();
-	await newUser.checkoutModal.openRegisterLink();
-	await newUser.loginSignupPage.isLoaded();
 	await newUser.loginSignupPage.login(person.email, person.password);
 
 	await newUser.header.assertUserName(person.name);
