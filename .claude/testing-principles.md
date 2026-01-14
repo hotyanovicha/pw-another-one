@@ -102,14 +102,14 @@ export class ProductDashboardPage extends BasePage {
 
   // High-level methods exposing business intent
   @step
-  async searchForProduct(productName: string): Promise<void> {
+  async searchForProduct(productName: string) {
     await this.searchInput.fill(productName);
     await this.submitButton.click();
     await this.waitForLoadingComplete();
   }
 
   @step
-  async verifyProductDisplayed(productName: string): Promise<void> {
+  async verifyProductDisplayed(productName: string) {
     const product = this.page.locator(`[data-product="${productName}"]`);
     await this.elementToBeVisible(product);
   }
@@ -138,7 +138,7 @@ export class OrderSteps {
   }
 
   @step
-  async placeOrder(product: Product): Promise<string> {
+  async placeOrder(product: Product) {
     await this.orderPage.selectProduct(product.name);
     await this.orderPage.enterQuantity(product.quantity);
     await this.orderPage.submitOrder();
@@ -150,7 +150,7 @@ export class OrderSteps {
   }
 
   @step
-  async verifyOrderInHistory(orderId: string): Promise<void> {
+  async verifyOrderInHistory(orderId: string) {
     await this.orderPage.navigateToHistory();
     await this.orderPage.verifyOrderExists(orderId);
   }
@@ -219,7 +219,7 @@ expect.soft(actualValue).toBe(expectedValue);
 **Example:**
 ```typescript
 @step
-async verifyProductDetails(expected: Product): Promise<void> {
+async verifyProductDetails(expected: Product) {
   // Soft assertions for independent verifications
   expect.soft(await this.productName.textContent())
     .toBe(expected.name);
@@ -273,13 +273,13 @@ export abstract class BaseForm {
   protected async expectTextToBeVisible(
     text: string,
     options?: { isSoft?: boolean }
-  ): Promise<void> {
+  ) {
     const element = this.formLocator.getByText(text).first();
     await this.elementToBeVisible(element, options);
   }
 
   // Waiting for async operations
-  protected async waitForLoadingComplete(): Promise<void> {
+  protected async waitForLoadingComplete() {
     await this.page.locator('.loading-spinner')
       .waitFor({ state: 'hidden' });
   }
@@ -364,7 +364,7 @@ export class CheckoutChain {
   }
 
   @step
-  async completeCheckoutFlow(): Promise<string> {
+  async completeCheckoutFlow() {
     await this.addProductToCart();
     await this.proceedToCheckout();
     await this.fillShippingDetails();
@@ -373,7 +373,7 @@ export class CheckoutChain {
     return orderId;
   }
 
-  private async addProductToCart(): Promise<void> {
+  private async addProductToCart() {
     await this.productStrategy.selectProduct();
     await this.productStrategy.configureOptions();
     await new CartSteps(this.page).addToCart();
@@ -428,7 +428,7 @@ export class ProductService {
   }
 
   @step
-  async createProduct(product: CreateProductRequest): Promise<number> {
+  async createProduct(product: CreateProductRequest) {
     const response = await sendRequest(this.apiContext, {
       method: RequestMethod.POST,
       url: Endpoints.PRODUCTS,
@@ -500,7 +500,7 @@ export async function sendRequest(
 export async function expectSuccessfulResponse(
   response: APIResponse,
   options?: { isSoft: boolean; errorMessage?: string }
-): Promise<void> {
+) {
   const prefix = options?.errorMessage ?? 'Response should be successful';
   const message = response.ok()
     ? `${prefix}: ${response.status()} ${response.statusText()}`
@@ -614,7 +614,7 @@ export class DatabaseSteps {
   private dbHandler: DatabaseHandler;
   
   @step
-  async getActiveProduct(): Promise<ProductData> {
+  async getActiveProduct() {
     const query = `
       SELECT id, name, price, status 
       FROM products 
@@ -627,7 +627,7 @@ export class DatabaseSteps {
   }
 
   @step
-  async createTestOrder(customerId: number): Promise<number> {
+  async createTestOrder(customerId: number) {
     const query = `
       INSERT INTO orders (customer_id, status, created_at)
       VALUES (?, 'PENDING', NOW())
@@ -638,7 +638,7 @@ export class DatabaseSteps {
   }
 
   @step
-  async cleanupTestData(orderId: number): Promise<void> {
+  async cleanupTestData(orderId: number) {
     await this.dbHandler.executeQuery(
       'DELETE FROM orders WHERE id = ?',
       [orderId]
@@ -662,7 +662,7 @@ export class DataInjection {
   }
 
   @step
-  async setupOrderReadyForCheckout(): Promise<OrderSetup> {
+  async setupOrderReadyForCheckout() {
     const productId = await this.productService.createProduct({
       name: 'Test Product',
       price: 99.99
@@ -677,7 +677,7 @@ export class DataInjection {
   }
 
   @step
-  async cleanupOrder(orderId: number): Promise<void> {
+  async cleanupOrder(orderId: number) {
     await this.orderService.deleteOrder(orderId);
   }
 }

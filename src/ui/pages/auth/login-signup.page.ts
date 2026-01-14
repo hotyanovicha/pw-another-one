@@ -13,23 +13,23 @@ export class LoginSignupPage extends BasePage {
 	private readonly loginButton = this.page.getByRole('button', { name: 'Login' });
 
 	@step()
-	async open(): Promise<this> {
+	async open() {
 		await this.page.goto('/login');
 		return this;
 	}
 	@step()
-	async enterNameAndEmail(name: string, email: string): Promise<void> {
+	async enterNameAndEmail(name: string, email: string) {
 		await this.nameInput.fill(name);
 		await this.emailInput.fill(email);
 	}
 
 	@step()
-	async clickSignupButton(): Promise<void> {
+	async clickSignupButton() {
 		await this.signupButton.click();
 	}
 
 	@step()
-	async login(email: string, password: string): Promise<void> {
+	async login(email: string, password: string) {
 		await this.loginEmailInput.fill(email);
 		await this.loginPasswordInput.fill(password);
 		await this.loginButton.click();

@@ -7,12 +7,12 @@ export class HomePage extends BasePage {
 	private readonly signupLoginLink = this.page.getByRole('link', { name: 'Signup / Login' });
 
 	@step()
-	async open(): Promise<void> {
+	async open() {
 		await this.page.goto('/');
 	}
 
 	@step()
-	async clickSignupLoginLink(): Promise<void> {
+	async clickSignupLoginLink() {
 		await this.signupLoginLink.click();
 	}
 }

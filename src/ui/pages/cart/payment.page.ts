@@ -21,7 +21,7 @@ export class PaymentPage extends BasePage {
 	private readonly downloadInvoice = this.page.getByRole('link', { name: 'Download Invoice' });
 
 	@step()
-	async enterCreditCard(card: CreditCard, user: Person): Promise<void> {
+	async enterCreditCard(card: CreditCard, user: Person) {
 		await this.cardName.fill(`${user.firstName} ${user.lastName}`);
 		await this.cardNumber.fill(card.number);
 		await this.cardCvc.fill(card.cvv);
@@ -30,29 +30,29 @@ export class PaymentPage extends BasePage {
 	}
 
 	@step()
-	async clickPayConfirm(): Promise<void> {
+	async clickPayConfirm() {
 		await this.payBtn.click();
 	}
 
 	@step()
-	async clickDownloadInvoice(): Promise<Download> {
+	async clickDownloadInvoice() {
 		const [download] = await Promise.all([this.page.waitForEvent('download'), this.downloadInvoice.click()]);
 		return download;
 	}
 
 	@step()
-	async clickContinue(): Promise<void> {
+	async clickContinue() {
 		await this.continueBtn.click();
 	}
 
 	@step()
-	async assertOrderPlaced(): Promise<void> {
+	async assertOrderPlaced() {
 		await expect.soft(this.orderPlacedTitle).toHaveText(/order placed!/i);
 		await expect.soft(this.orderPlacedMsg).toBeVisible();
 	}
 
 	@step()
-	async assertInvoiceValid(download: Download, expected: { customer: Person; amount: number }): Promise<void> {
+	async assertInvoiceValid(download: Download, expected: { customer: Person; amount: number }) {
 		const filePath = await download.path();
 		expect(filePath).toBeTruthy();
 

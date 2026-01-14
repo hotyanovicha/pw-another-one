@@ -36,6 +36,7 @@ Use Read tool to view complete files mentioned in the diff.
 - [ ] **Assertions validate meaningful outcomes** - not just presence of elements
 
 #### Test Stability & Reliability
+- [ ] **User-Facing Locators** - prefer `getByRole`/`getByText` over CSS/XPath
 - [ ] **Selectors are resilient** - won't break on UI changes (use role, text, semantic HTML where possible)
 - [ ] **No race conditions** - proper waits for async operations
 - [ ] **No hard-coded waits** - `page.waitForTimeout()` is a red flag
@@ -48,11 +49,13 @@ Use Read tool to view complete files mentioned in the diff.
 #### Test Independence & Isolation
 - [ ] **Tests can run in any order** - no implicit dependencies between tests
 - [ ] **No shared mutable state** - each test creates its own data
+- [ ] **Statelessness** - no global variable modification
+- [ ] **Fixture Scoping** - use fixtures for setup/teardown (auth, seeding)
 - [ ] **Proper setup/teardown** - beforeEach/afterEach used correctly
 - [ ] **No test pollution** - one test's failure doesn't cascade
 
 #### Test Data Strategy
-- [ ] **Data creation strategy is clear** - factories vs fixtures vs inline
+- [ ] **Data creation strategy** - prefer Factories over hardcoded JSON
 - [ ] **Unique data per test/worker** - no conflicts in parallel
 - [ ] **Cleanup strategy defined** - how is test data removed?
 - [ ] **No hardcoded magic values** - data is meaningful and traceable
@@ -101,15 +104,17 @@ Red flags to catch:
 - Component that should be in `components/` but is nested in a page folder
 - Test file not following `.spec.ts` convention
 - Mixed concerns in one folder (pages + utils + types together)
+- Explicit `Promise<void>`, `Promise<primitive>`, or `Promise<SimpleObject>` return types (TS inference is preferred)
 
 **Naming Conventions:**
 - [ ] **Variables/methods follow conventions** - camelCase, descriptive, no abbreviations
 - [ ] **File names are consistent** - kebab-case, clear purpose
-- [ ] **Test names are specific** - describe scenario and expected outcome
+- [ ] **Declarative Naming** - follow `should [outcome] when [scenario]` pattern
 - [ ] **Constants are UPPER_CASE** - configuration values, magic numbers extracted
 
 **Over-Engineering:**
 - [ ] **No premature abstraction** - don't create utilities for single use
+- [ ] **Avoid Hasty Abstractions (AHA)** - avoid complex helpers handling many cases
 - [ ] **No unnecessary complexity** - KISS principle, straightforward solutions
 - [ ] **No over-generic methods** - specific is better than flexible
 - [ ] **No unused code** - dead code removed, imports cleaned up
@@ -117,7 +122,9 @@ Red flags to catch:
 **Method Optimization:**
 - [ ] **Methods do one thing** - single responsibility
 - [ ] **No duplicate logic** - DRY principle applied where it makes sense
-- [ ] **Proper return types** - TypeScript types are explicit and useful
+- [ ] **Proper return types** - TypeScript types are useful (but avoid redundancy like `Promise<void>`)
+- [ ] **Strict Type Safety** - NO 'any' type, use generics/unknown
+- [ ] **Let TypeScript infer Promise types** - Avoid explicit `Promise<void>` or types for primitives/simple objects. Only use explicit types for complex interfaces or when inference fails.
 - [ ] **Async/await used correctly** - no unnecessary awaits, proper error handling
 
 **Code Style:**
@@ -137,8 +144,12 @@ Where types should live:
 - [ ] **No duplicate type definitions** - same type defined in multiple files is a red flag; search for duplicates
 - [ ] **Page-specific types can stay in page files** - if a type is ONLY used in one page, it can stay there
 - [ ] **Derived types stay with constants** - when type uses `typeof CONSTANT` (e.g., `type CreditCard = typeof CREDIT_CARDS[keyof typeof CREDIT_CARDS]`), keep them together in constants file - this is OK
+- [ ] **Utility Types used** - `Pick`, `Omit`, `Partial` for leaner types
+- [ ] **Interface Segregation** - functions take only needed data (e.g. `id` not `User` obj)
+- [ ] **No Enums** - prefer `as const` string unions
 
 Constants organization:
+- [ ] **Module Boundaries** - no circular refs or reaching into private folders
 - [ ] **Constants in `test-data/constants/`** - test data like credit cards, URLs, timeouts
 - [ ] **Constants file = one domain** - `credit-card.ts` for cards, `urls.ts` for URLs, don't mix domains
 - [ ] **UPPER_CASE for constants** - `CREDIT_CARDS` not `creditCards`
@@ -185,7 +196,12 @@ Red flags to catch:
 - [ ] **Screenshots/videos will be useful** - failures capture enough context
 
 #### Page Object Quality
-- [ ] **Abstractions make sense** - methods represent user actions, not implementation
+- [ ] **Single Responsibility (SRP)** - elements & interactions only, NO assertions
+- [ ] **Encapsulation** - private/protected locators, public action methods
+- [ ] **Action-Oriented Methods** - `submitForm` not `clickSubmit`
+- [ ] **Dependency Inversion** - injected via Fixtures (no `new Page(page)`)
+- [ ] **Component Composition** - use shared components (e.g. Header)
+- [ ] **Abstractions make sense** - methods represent user actions
 - [ ] **Not over-engineered** - simple, clear, maintainable
 - [ ] **Proper error handling** - failures are debuggable with clear messages
 
@@ -201,12 +217,6 @@ Red flags to catch:
 - [ ] **Tests behavior, not implementation** - UI changes shouldn't break logic tests
 - [ ] **New team member readable** - can someone understand this without context?
 - [ ] **Change impact is limited** - page object change doesn't break 50 tests
-
-#### Test Coverage & Gaps
-- [ ] **Negative scenarios covered** - what happens when things go wrong?
-- [ ] **Boundary conditions tested** - min/max values, empty states
-- [ ] **Error states handled** - network failures, validation errors
-- [ ] **Coverage gaps identified** - what important scenarios are NOT tested?
 
 #### Assertion Strategy
 - [ ] **Asserting the right things** - meaningful business outcomes
@@ -244,6 +254,7 @@ Red flags to catch:
 - Challenge decisions: "Why this approach? Is it necessary?"
 - Consider CI/CD: "Will this work reliably in pipeline?"
 - Assess risk: "What could this break? What's not covered?"
+- **DO NOT include "Test Coverage Analysis" section** - this will be handled by a separate agent
 
 **Patterns to flag for extra review (not issues, just note them):**
 - Public locators used for assertion flexibility

@@ -7,7 +7,7 @@ export class ConsentDialog {
 	constructor(private page: Page) {}
 
 	@step()
-	async acceptIfVisible(): Promise<void> {
+	async acceptIfVisible() {
 		if (await this.button.isVisible({ timeout: 1500 }).catch(() => false)) {
 			await this.button.click();
 		}
