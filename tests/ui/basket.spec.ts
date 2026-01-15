@@ -65,3 +65,31 @@ test.describe('Basket', () => {
 		await cartWithProducts.cart.assertCartEmpty();
 	});
 });
+
+test('User can update product quantities in cart', { tag: '@P2' }, async ({ newUserPages }) => {
+	const { newUser } = newUserPages;
+
+	await newUser.products.open();
+	await newUser.products.isLoaded();
+	const firstProduct = await newUser.products.selectProduct();
+	await newUser.products.openProductPage(0);
+	await newUser.product.isLoaded();
+	await newUser.product.getProductInfo();
+	await newUser.product.addToCart(2);
+	await newUser.cartModal.openCart();
+	await newUser.cart.isLoaded();
+
+	await newUser.cart.validateCartItems([{ name: firstProduct.name, price: firstProduct.price, quantity: 2 }]);
+
+	await newUser.products.open();
+	await newUser.products.isLoaded();
+	await newUser.products.selectProduct(firstProduct.index);
+	await newUser.products.openProductPage(0);
+	await newUser.product.isLoaded();
+	await newUser.product.getProductInfo();
+	await newUser.product.addToCart(3);
+	await newUser.cartModal.openCart();
+	await newUser.cart.isLoaded();
+
+	await newUser.cart.validateCartItems([{ name: firstProduct.name, price: firstProduct.price, quantity: 5 }]);
+});
