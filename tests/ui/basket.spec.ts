@@ -72,9 +72,8 @@ test('User can update product quantities in cart', { tag: '@P2' }, async ({ newU
 	await newUser.products.open();
 	await newUser.products.isLoaded();
 	const firstProduct = await newUser.products.selectProduct();
-	await newUser.products.openProductPage(0);
+	await newUser.products.openProductPage(firstProduct.index);
 	await newUser.product.isLoaded();
-	await newUser.product.getProductInfo();
 	await newUser.product.addToCart(2);
 	await newUser.cartModal.openCart();
 	await newUser.cart.isLoaded();
@@ -84,9 +83,8 @@ test('User can update product quantities in cart', { tag: '@P2' }, async ({ newU
 	await newUser.products.open();
 	await newUser.products.isLoaded();
 	await newUser.products.selectProduct(firstProduct.index);
-	await newUser.products.openProductPage(0);
+	await newUser.products.openProductPage(firstProduct.index);
 	await newUser.product.isLoaded();
-	await newUser.product.getProductInfo();
 	await newUser.product.addToCart(3);
 	await newUser.cartModal.openCart();
 	await newUser.cart.isLoaded();
