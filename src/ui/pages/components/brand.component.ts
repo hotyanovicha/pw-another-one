@@ -14,7 +14,7 @@ export class BrandComponent {
 	}
 
 	@step()
-	async assertBrandPannelExists(): Promise<void> {
+	async assertBrandPanelExists(): Promise<void> {
 		await expect(this.brandPanel).toBeVisible();
 	}
 

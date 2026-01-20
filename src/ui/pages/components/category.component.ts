@@ -9,19 +9,19 @@ export class CategoryComponent {
 
 	@step()
 	async selectCategoryOption(category: string, option: string): Promise<void> {
-		await this.categories.filter({ hasText: new RegExp(`^\\s*${this.escapeRegExp(category)}\\s*$`) }).click();
+		await this.categories.filter({ hasText: this.createCategoryRegex(category) }).click();
 		await this.page.locator(`#${category}`).locator(`li a:has-text("${option}")`).click();
 	}
 
 	@step()
-	async assertCategoryPannelExist(): Promise<void> {
+	async assertCategoryPanelExists(): Promise<void> {
 		await expect(this.categoryPanel).toBeVisible();
 	}
 
 	@step()
 	async verifyCategoriesAndOptions(expectedCategories: Record<string, readonly string[]>): Promise<void> {
 		for (const [category, options] of Object.entries(expectedCategories)) {
-			const categoryLink = this.categories.filter({ hasText: new RegExp(`^\\s*${this.escapeRegExp(category)}\\s*$`) });
+			const categoryLink = this.categories.filter({ hasText: this.createCategoryRegex(category) });
 
 			await expect(categoryLink).toBeVisible();
 			const href = await categoryLink.getAttribute('href');
@@ -41,6 +41,10 @@ export class CategoryComponent {
 			}
 		}
 	}
+	private createCategoryRegex(category: string): RegExp {
+		return new RegExp(`^\\s*${this.escapeRegExp(category)}\\s*$`);
+	}
+
 	private escapeRegExp(string: string): string {
 		return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 	}

@@ -73,8 +73,14 @@ export class ProductsPage extends BasePage {
 	}
 
 	@step()
-	async assertPageTitle(category: string, option: string): Promise<void> {
+	async assertCategoryTitle(category: string, option: string): Promise<void> {
 		const expectedTitle = `${category} - ${option} Products`.toUpperCase();
+		await expect(this.page.getByRole('heading', { name: expectedTitle })).toBeVisible();
+	}
+
+	@step()
+	async assertBrandTitle(brand: string): Promise<void> {
+		const expectedTitle = `Brand - ${brand} Products`.toUpperCase();
 		await expect(this.page.getByRole('heading', { name: expectedTitle })).toBeVisible();
 	}
 
@@ -106,7 +112,7 @@ export class ProductsPage extends BasePage {
 		}
 	}
 	@step()
-	async assertProductsBrand(brand: string) {
+	async assertProductsBrand(brand: string): Promise<void> {
 		const count = await this.productCards.count();
 		expect(count).toBeGreaterThan(0);
 		for (let i = 0; i < count; i++) {
