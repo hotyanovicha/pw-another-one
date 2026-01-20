@@ -9,33 +9,33 @@ export class HeaderComponent {
 	constructor(private page: Page) {}
 
 	@step()
-	async isLoaded() {
+	async isLoaded(): Promise<this> {
 		await expect(this.homeLink).toBeVisible();
 		return this;
 	}
 
 	@step()
-	async openCartPage() {
+	async openCartPage(): Promise<void> {
 		await this.cartLink.click();
 	}
 
 	@step()
-	async assertUserName(name: string) {
+	async assertUserName(name: string): Promise<void> {
 		await expect(this.userName).toContainText(name);
 	}
 
 	@step()
-	async assertUserLoggedIn() {
+	async assertUserLoggedIn(): Promise<void> {
 		await expect(this.userName).toBeVisible();
 	}
 
 	@step()
-	async clickLogout() {
+	async clickLogout(): Promise<void> {
 		await this.logoutLink.click();
 	}
 
 	@step()
-	async assertUserLoggedOut() {
+	async assertUserLoggedOut(): Promise<void> {
 		await expect(this.userName).toHaveCount(0);
 	}
 }

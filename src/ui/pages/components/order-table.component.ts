@@ -8,7 +8,7 @@ export class OrderTable {
 	constructor(private rows: Locator) {}
 
 	@step()
-	async validateCartItems(expected: CartItem[]) {
+	async validateCartItems(expected: CartItem[]): Promise<number> {
 		await expect(this.rows.first()).toBeVisible();
 		await expect(this.rows).toHaveCount(expected.length);
 		let cartTotal = 0;

@@ -25,29 +25,29 @@ export class CheckoutPage extends BasePage {
 	private readonly orderTable = new OrderTable(this.rows);
 
 	@step()
-	async assertAddress(user: Person) {
+	async assertAddress(user: Person): Promise<void> {
 		await this.assertAddressBlock(this.addressDelivery, user);
 		await this.assertAddressBlock(this.addressInvoice, user);
 	}
 
 	@step()
-	async clickPlaceOrder() {
+	async clickPlaceOrder(): Promise<void> {
 		await this.placeOrderBtn.click();
 	}
 
 	@step()
-	async validateCartItems(expected: CartItem[]) {
+	async validateCartItems(expected: CartItem[]): Promise<number> {
 		return await this.orderTable.validateCartItems(expected);
 	}
 
 	@step()
-	async assertCartTotal(expected: number) {
+	async assertCartTotal(expected: number): Promise<void> {
 		expect
 			.soft(toNumber(await this.totalText.innerText()), { message: `Total cart amount should be ${expected}` })
 			.toBe(expected);
 	}
 
-	private async assertAddressBlock(block: Locator, user: Person) {
+	private async assertAddressBlock(block: Locator, user: Person): Promise<void> {
 		const fullName = `${user.title} ${user.firstName} ${user.lastName}`;
 		const fullAddress = `${user.city} ${user.state} ${user.zipcode}`;
 

@@ -14,7 +14,7 @@ export class ProductPage extends BasePage {
 	private readonly productPriceText = this.productInfo.getByText(/^Rs\.\s*\d+/, { exact: false });
 
 	@step()
-	async addToCart(amount = 1) {
+	async addToCart(amount = 1): Promise<void> {
 		await this.quantityInput.fill(String(amount));
 		await this.addToCartBtn.click();
 	}
@@ -29,7 +29,7 @@ export class ProductPage extends BasePage {
 	}
 
 	@step()
-	async assertProductInfo(productInfo: ProductInfo) {
+	async assertProductInfo(productInfo: ProductInfo): Promise<void> {
 		const opendCard = await this.getProductInfo();
 		expect(opendCard.name).toBe(productInfo.name);
 		expect(opendCard.price).toBe(productInfo.price);

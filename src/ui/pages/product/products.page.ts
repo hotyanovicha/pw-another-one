@@ -21,7 +21,7 @@ export class ProductsPage extends BasePage {
 	private readonly headerTitle = this.page.locator('.features_items .title');
 
 	@step()
-	async open() {
+	async open(): Promise<void> {
 		await this.page.goto('/products');
 	}
 
@@ -60,49 +60,49 @@ export class ProductsPage extends BasePage {
 	}
 
 	@step()
-	async addToCart(index: number) {
+	async addToCart(index: number): Promise<void> {
 		const selectedProduct = this.productCards.nth(index);
 		const addToCartBtn = selectedProduct.locator(this.addToCartButton);
 		await addToCartBtn.click();
 	}
 
 	@step()
-	async searchProduct(keyword?: string) {
+	async searchProduct(keyword?: string): Promise<void> {
 		await this.searchField.fill(keyword ?? '');
 		await this.searchBtn.click();
 	}
 
 	@step()
-	async assertPageTitle(expectedTitle: string) {
+	async assertPageTitle(expectedTitle: string): Promise<void> {
 		await expect(this.headerTitle).toHaveText(expectedTitle);
 	}
 
 	@step()
-	async assertCategoryPageTitle(category: string, option: string) {
+	async assertCategoryPageTitle(category: string, option: string): Promise<void> {
 		const expectedTitle = `${category} - ${option} Products`.toUpperCase();
 		await expect(this.page.getByRole('heading', { name: expectedTitle })).toBeVisible();
 	}
 
 	@step()
-	async assertSearchExist() {
+	async assertSearchExist(): Promise<void> {
 		await expect(this.searchField).toBeVisible();
 	}
 
 	@step()
-	async assertProductsExist() {
+	async assertProductsExist(): Promise<void> {
 		const countProducts = await this.viewProductLinks.count();
 		expect(countProducts).toBeGreaterThan(2);
 	}
 
 	@step()
-	async assertSearchResultsEmpty() {
+	async assertSearchResultsEmpty(): Promise<void> {
 		await expect(this.searchedProductsTitle).toBeVisible();
 		const countProducts = await this.productCards.all();
 		expect(countProducts.length).toBe(0);
 	}
 
 	@step()
-	async assertSearchResults(keyword: string) {
+	async assertSearchResults(keyword: string): Promise<void> {
 		const products = await this.productCards.all();
 		expect(products.length).toBeGreaterThan(0);
 		for (const product of products) {
