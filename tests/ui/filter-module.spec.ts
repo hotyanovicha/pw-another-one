@@ -1,5 +1,6 @@
 import { test } from '@/ui/fixtures/index';
-import { CATEGORY_PRODUCTS } from '@/ui/test-data/constants/categories';
+import { BRANDS } from '@/ui/test-data/constants/brands';
+import { CATEGORIES, CATEGORY_PRODUCTS } from '@/ui/test-data/constants/categories';
 
 test('Filter products by category', { tag: '@P1' }, async ({ pages }) => {
 	await pages.home.open();
@@ -7,4 +8,16 @@ test('Filter products by category', { tag: '@P1' }, async ({ pages }) => {
 
 	await pages.categoryComponent.assertCategoryPannelExist();
 	await pages.categoryComponent.verifyCategoriesAndOptions(CATEGORY_PRODUCTS);
+
+	await pages.categoryComponent.selectCategoryOption(CATEGORIES.WOMEN, CATEGORY_PRODUCTS[CATEGORIES.WOMEN][0]);
+	await pages.products.assertCategoryPageTitle(CATEGORIES.WOMEN, CATEGORY_PRODUCTS[CATEGORIES.WOMEN][0]);
+	await pages.products.assertSearchResults(CATEGORY_PRODUCTS[CATEGORIES.WOMEN][0]);
+
+	await pages.categoryComponent.selectCategoryOption(CATEGORIES.MEN, CATEGORY_PRODUCTS[CATEGORIES.MEN][1]);
+	await pages.products.assertCategoryPageTitle(CATEGORIES.MEN, CATEGORY_PRODUCTS[CATEGORIES.MEN][1]);
+	await pages.products.assertSearchResults(CATEGORY_PRODUCTS[CATEGORIES.MEN][1]);
+
+	await pages.brandComponent.assertBrandPannelExists();
+	await pages.brandComponent.verifyBrandsList(BRANDS);
+	await pages.brandComponent.selectBrand(BRANDS.MADAME);
 });

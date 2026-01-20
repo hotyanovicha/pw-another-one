@@ -18,6 +18,7 @@ export class ProductsPage extends BasePage {
 	private readonly searchField = this.page.locator('#search_product');
 	public readonly searchedProductsTitle = this.page.getByRole('heading', { name: 'Searched Products' });
 	private readonly searchBtn = this.page.locator('#submit_search');
+	private readonly headerTitle = this.page.locator('.features_items .title');
 
 	@step()
 	async open() {
@@ -69,6 +70,17 @@ export class ProductsPage extends BasePage {
 	async searchProduct(keyword?: string) {
 		await this.searchField.fill(keyword ?? '');
 		await this.searchBtn.click();
+	}
+
+	@step()
+	async assertPageTitle(expectedTitle: string) {
+		await expect(this.headerTitle).toHaveText(expectedTitle);
+	}
+
+	@step()
+	async assertCategoryPageTitle(category: string, option: string) {
+		const expectedTitle = `${category} - ${option} Products`.toUpperCase();
+		await expect(this.page.getByRole('heading', { name: expectedTitle })).toBeVisible();
 	}
 
 	@step()

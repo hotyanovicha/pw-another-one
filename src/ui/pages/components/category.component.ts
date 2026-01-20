@@ -8,6 +8,12 @@ export class CategoryComponent {
 	constructor(private page: Page) {}
 
 	@step()
+	async selectCategoryOption(category: string, option: string) {
+		await this.categories.filter({ hasText: new RegExp(`^\\s*${category}\\s*$`) }).click();
+		await this.page.locator(`#${category}`).locator(`li a:has-text("${option}")`).click();
+	}
+
+	@step()
 	async assertCategoryPannelExist() {
 		await expect(this.categoryPanel).toBeVisible();
 	}
