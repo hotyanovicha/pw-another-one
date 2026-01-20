@@ -7,13 +7,13 @@ export class CheckoutModal {
 	constructor(private page: Page) {}
 
 	@step()
-	async isLoaded() {
+	async isLoaded(): Promise<this> {
 		await expect(this.registerLink).toBeVisible();
 		return this;
 	}
 
 	@step()
-	async openRegisterLink() {
+	async openRegisterLink(): Promise<void> {
 		await this.registerLink.click();
 	}
 }

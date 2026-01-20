@@ -12,6 +12,8 @@ import { CartModal } from '@/ui/pages/components/cart-modal.component';
 import { CheckoutPage } from '@/ui/pages/cart/checkout.page';
 import { PaymentPage } from '@/ui/pages/cart/payment.page';
 import { CheckoutModal } from '@/ui/pages/components/checkout-modal.component';
+import { CategoryComponent } from '@/ui/pages/components/category.component';
+import { BrandComponent } from '@/ui/pages/components/brand.component';
 
 export class PageManager {
 	private _home?: HomePage;
@@ -19,14 +21,17 @@ export class PageManager {
 	private _signupPage?: SignupPage;
 	private _accountCreatedPage?: AccountCreatedPage;
 	private _consentDialog?: ConsentDialog;
-	private _header?: HeaderComponent;
-	private _products?: ProductsPage;
-	private _product?: ProductPage;
-	private _cart?: CartPage;
+	private _headerComponent?: HeaderComponent;
+	private _productsPage?: ProductsPage;
+	private _productPage?: ProductPage;
+	private _cartPage?: CartPage;
 	private _cartModal?: CartModal;
-	private _checkout?: CheckoutPage;
-	private _payment?: PaymentPage;
+	private _checkoutPage?: CheckoutPage;
+	private _paymentPage?: PaymentPage;
 	private _checkoutModal?: CheckoutModal;
+	private _categoryComponent?: CategoryComponent;
+	private _brandComponent?: BrandComponent;
+
 	constructor(private page: Page) {}
 
 	get home(): HomePage {
@@ -45,27 +50,33 @@ export class PageManager {
 		return (this._consentDialog ??= new ConsentDialog(this.page));
 	}
 	get header(): HeaderComponent {
-		return (this._header ??= new HeaderComponent(this.page));
+		return (this._headerComponent ??= new HeaderComponent(this.page));
 	}
 	get products(): ProductsPage {
-		return (this._products ??= new ProductsPage(this.page));
+		return (this._productsPage ??= new ProductsPage(this.page));
 	}
 	get product(): ProductPage {
-		return (this._product ??= new ProductPage(this.page));
+		return (this._productPage ??= new ProductPage(this.page));
 	}
 	get cart(): CartPage {
-		return (this._cart ??= new CartPage(this.page));
+		return (this._cartPage ??= new CartPage(this.page));
 	}
 	get cartModal(): CartModal {
 		return (this._cartModal ??= new CartModal(this.page));
 	}
 	get checkout(): CheckoutPage {
-		return (this._checkout ??= new CheckoutPage(this.page));
+		return (this._checkoutPage ??= new CheckoutPage(this.page));
 	}
 	get payment(): PaymentPage {
-		return (this._payment ??= new PaymentPage(this.page));
+		return (this._paymentPage ??= new PaymentPage(this.page));
 	}
 	get checkoutModal(): CheckoutModal {
 		return (this._checkoutModal ??= new CheckoutModal(this.page));
+	}
+	get categoryComponent(): CategoryComponent {
+		return (this._categoryComponent ??= new CategoryComponent(this.page));
+	}
+	get brandComponent(): BrandComponent {
+		return (this._brandComponent ??= new BrandComponent(this.page));
 	}
 }
