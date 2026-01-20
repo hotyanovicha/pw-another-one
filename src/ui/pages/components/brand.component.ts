@@ -9,9 +9,8 @@ export class BrandComponent {
 	constructor(private page: Page) {}
 
 	@step()
-	async selectBrand(brand: string): Promise<string> {
-		this.brandNames.getByRole('link', { name: brand }).click();
-		return brand;
+	async selectBrand(brand: string): Promise<void> {
+		await this.brandNames.getByRole('link', { name: brand }).click();
 	}
 
 	@step()
