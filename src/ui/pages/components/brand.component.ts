@@ -10,7 +10,7 @@ export class BrandComponent {
 
 	@step()
 	async selectBrand(brand: string): Promise<string> {
-		this.brandNames.getByRole('link', { name: brand });
+		this.brandNames.getByRole('link', { name: brand }).click();
 		return brand;
 	}
 

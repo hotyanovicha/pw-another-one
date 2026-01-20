@@ -9,7 +9,7 @@ export class CategoryComponent {
 
 	@step()
 	async selectCategoryOption(category: string, option: string): Promise<void> {
-		await this.categories.filter({ hasText: new RegExp(`^\\s*${category}\\s*$`) }).click();
+		await this.categories.filter({ hasText: new RegExp(`^\\s*${this.escapeRegExp(category)}\\s*$`) }).click();
 		await this.page.locator(`#${category}`).locator(`li a:has-text("${option}")`).click();
 	}
 
@@ -21,7 +21,7 @@ export class CategoryComponent {
 	@step()
 	async verifyCategoriesAndOptions(expectedCategories: Record<string, readonly string[]>): Promise<void> {
 		for (const [category, options] of Object.entries(expectedCategories)) {
-			const categoryLink = this.categories.filter({ hasText: new RegExp(`^\\s*${category}\\s*$`) });
+			const categoryLink = this.categories.filter({ hasText: new RegExp(`^\\s*${this.escapeRegExp(category)}\\s*$`) });
 
 			await expect(categoryLink).toBeVisible();
 			const href = await categoryLink.getAttribute('href');
@@ -40,5 +40,8 @@ export class CategoryComponent {
 				await expect(subCategoryPanel.locator(`li a:has-text("${option}")`)).toBeVisible();
 			}
 		}
+	}
+	private escapeRegExp(string: string): string {
+		return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 	}
 }

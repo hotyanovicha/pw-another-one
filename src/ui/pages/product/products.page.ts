@@ -73,12 +73,7 @@ export class ProductsPage extends BasePage {
 	}
 
 	@step()
-	async assertPageTitle(expectedTitle: string): Promise<void> {
-		await expect(this.headerTitle).toHaveText(expectedTitle);
-	}
-
-	@step()
-	async assertCategoryPageTitle(category: string, option: string): Promise<void> {
+	async assertPageTitle(category: string, option: string): Promise<void> {
 		const expectedTitle = `${category} - ${option} Products`.toUpperCase();
 		await expect(this.page.getByRole('heading', { name: expectedTitle })).toBeVisible();
 	}
@@ -108,6 +103,17 @@ export class ProductsPage extends BasePage {
 		for (const product of products) {
 			const productName = await product.locator(this.productName).innerText();
 			expect(productName.toLowerCase()).toContain(keyword.toLowerCase());
+		}
+	}
+	@step()
+	async assertProductsBrand(brand: string) {
+		const count = await this.productCards.count();
+		expect(count).toBeGreaterThan(0);
+		for (let i = 0; i < count; i++) {
+			const productPage = await this.openProductPage(i);
+			const productBrand = await productPage.getBrand();
+			expect(productBrand).toBe(brand);
+			await this.page.goBack();
 		}
 	}
 

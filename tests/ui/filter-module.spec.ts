@@ -10,14 +10,21 @@ test('Filter products by category', { tag: '@P1' }, async ({ pages }) => {
 	await pages.categoryComponent.verifyCategoriesAndOptions(CATEGORY_PRODUCTS);
 
 	await pages.categoryComponent.selectCategoryOption(CATEGORIES.WOMEN, CATEGORY_PRODUCTS[CATEGORIES.WOMEN][0]);
-	await pages.products.assertCategoryPageTitle(CATEGORIES.WOMEN, CATEGORY_PRODUCTS[CATEGORIES.WOMEN][0]);
+	await pages.products.assertPageTitle(CATEGORIES.WOMEN, CATEGORY_PRODUCTS[CATEGORIES.WOMEN][0]);
 	await pages.products.assertSearchResults(CATEGORY_PRODUCTS[CATEGORIES.WOMEN][0]);
 
 	await pages.categoryComponent.selectCategoryOption(CATEGORIES.MEN, CATEGORY_PRODUCTS[CATEGORIES.MEN][1]);
-	await pages.products.assertCategoryPageTitle(CATEGORIES.MEN, CATEGORY_PRODUCTS[CATEGORIES.MEN][1]);
+	await pages.products.assertPageTitle(CATEGORIES.MEN, CATEGORY_PRODUCTS[CATEGORIES.MEN][1]);
 	await pages.products.assertSearchResults(CATEGORY_PRODUCTS[CATEGORIES.MEN][1]);
 
 	await pages.brandComponent.assertBrandPannelExists();
 	await pages.brandComponent.verifyBrandsList(BRANDS);
-	await pages.brandComponent.selectBrand(BRANDS.MADAME);
+
+	await pages.brandComponent.selectBrand(BRANDS.POLO);
+	await pages.products.assertPageTitle('Brand', BRANDS.POLO);
+	await pages.products.assertProductsBrand(BRANDS.POLO);
+
+	await pages.brandComponent.selectBrand(BRANDS.BABYHUG);
+	await pages.products.assertPageTitle('Brand', BRANDS.BABYHUG);
+	await pages.products.assertProductsBrand(BRANDS.BABYHUG);
 });
