@@ -6,6 +6,7 @@ export class HeaderComponent {
 	private readonly userName = this.page.locator('a:has-text("Logged in as") b');
 	private readonly cartLink = this.page.getByRole('link', { name: 'Cart' });
 	private readonly logoutLink = this.page.getByRole('link', { name: 'Logout' });
+	private readonly contactUs = this.page.getByRole('link', { name: 'Contact us' });
 	constructor(private page: Page) {}
 
 	@step()
@@ -17,6 +18,10 @@ export class HeaderComponent {
 	@step()
 	async openCartPage(): Promise<void> {
 		await this.cartLink.click();
+	}
+	@step()
+	async openContactUsPage(): Promise<void> {
+		await this.contactUs.click();
 	}
 
 	@step()

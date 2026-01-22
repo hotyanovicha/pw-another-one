@@ -1,0 +1,2 @@
+Always ask for approval before applying changes.
+Do not use CSS and XPath locators. Prefer user-facing locators (getByRole, getByText, getByLabel, etc.) or getByTestId.

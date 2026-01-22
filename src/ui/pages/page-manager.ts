@@ -14,6 +14,7 @@ import { PaymentPage } from '@/ui/pages/cart/payment.page';
 import { CheckoutModal } from '@/ui/pages/components/checkout-modal.component';
 import { CategoryComponent } from '@/ui/pages/components/category.component';
 import { BrandComponent } from '@/ui/pages/components/brand.component';
+import { ContactUs } from '@/ui/pages/contact-us/contact-us.page';
 
 export class PageManager {
 	private _home?: HomePage;
@@ -31,6 +32,7 @@ export class PageManager {
 	private _checkoutModal?: CheckoutModal;
 	private _categoryComponent?: CategoryComponent;
 	private _brandComponent?: BrandComponent;
+	private _contactUsPage?: ContactUs;
 
 	constructor(private page: Page) {}
 
@@ -78,5 +80,8 @@ export class PageManager {
 	}
 	get brandComponent(): BrandComponent {
 		return (this._brandComponent ??= new BrandComponent(this.page));
+	}
+	get contactUs(): ContactUs {
+		return (this._contactUsPage ??= new ContactUs(this.page));
 	}
 }
