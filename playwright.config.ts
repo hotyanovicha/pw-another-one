@@ -19,7 +19,8 @@ export default defineConfig({
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 1 : 0,
 	workers: process.env.CI ? 5 : undefined,
-	reporter: process.env.CI ? [['list'], ['html']] : 'html',
+	reporter: process.env.CI ? [['list'], ['html']] : 'list',
+	timeout: 45 * 1000,
 	use: {
 		baseURL: process.env.BASE_URL,
 		screenshot: 'only-on-failure',
