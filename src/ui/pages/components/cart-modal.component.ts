@@ -9,12 +9,12 @@ export class CartModal {
 	constructor(private page: Page) {}
 
 	@step()
-	async openCart() {
+	async openCart(): Promise<void> {
 		await expect(this.cartModal).toBeVisible();
 		await this.viewCartLnk.click();
 	}
 	@step()
-	async continueShopping() {
+	async continueShopping(): Promise<void> {
 		await expect(this.cartModal).toBeVisible();
 		await this.continueShoppingBtn.click();
 		await expect(this.cartModal).toBeHidden();

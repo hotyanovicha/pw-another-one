@@ -17,12 +17,12 @@ export class CartPage extends BasePage {
 	private readonly orderTable = new OrderTable(this.rows);
 
 	@step()
-	async open() {
+	async open(): Promise<void> {
 		await this.page.goto('/view_cart');
 	}
 
 	@step()
-	async deleteProduct(productName: string) {
+	async deleteProduct(productName: string): Promise<void> {
 		await this.page
 			.getByRole('row', { name: `${productName}` })
 			.locator('.cart_quantity_delete')
@@ -30,12 +30,12 @@ export class CartPage extends BasePage {
 	}
 
 	@step()
-	async clickProceedCheckout() {
+	async clickProceedCheckout(): Promise<void> {
 		await this.proceedBtn.click();
 	}
 
 	@step()
-	async assertProductDeleted(productName: string) {
+	async assertProductDeleted(productName: string): Promise<void> {
 		await expect
 			.poll(async () => await rowByName(this.rows, productName).count(), {
 				timeout: 5000,
@@ -45,12 +45,12 @@ export class CartPage extends BasePage {
 	}
 
 	@step()
-	async assertCartEmpty() {
+	async assertCartEmpty(): Promise<void> {
 		await expect(this.emptyCart).toBeVisible();
 	}
 
 	@step()
-	async validateCartItems(expected: CartItem[]) {
+	async validateCartItems(expected: CartItem[]): Promise<number> {
 		return await this.orderTable.validateCartItems(expected);
 	}
 }

@@ -7,12 +7,12 @@ export class AccountCreatedPage extends BasePage {
 	private readonly continueButton = this.page.locator('[data-qa="continue-button"]');
 
 	@step()
-	async assertSuccessMessage() {
+	async assertSuccessMessage(): Promise<void> {
 		await expect.soft(this.uniqueElement).toHaveText('Account Created!');
 	}
 
 	@step()
-	async clickContinueButton() {
+	async clickContinueButton(): Promise<void> {
 		await this.continueButton.click();
 	}
 }
