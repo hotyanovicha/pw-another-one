@@ -1,19 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { pickRandomElement } from '@/utils/random';
 
-export const GENDER_TITLES = ['Mr.', 'Mrs.'] as const;
-export type GenderTitle = (typeof GENDER_TITLES)[number];
-
-export const COUNTRIES = [
-	'United States',
-	'Canada',
-	'India',
-	'Australia',
-	'New Zealand',
-	'Israel',
-	'Singapore',
-] as const;
-export type Country = (typeof COUNTRIES)[number];
+import { COUNTRIES, Country, GENDER_TITLES, GenderTitle } from '@/ui/test-data/constants/personal-data';
 
 export type Person = {
 	title: GenderTitle;
@@ -32,7 +20,7 @@ export type Person = {
 
 	address1: string;
 	address2: string;
-	country: string;
+	country: Country;
 	state: string;
 	city: string;
 	zipcode: string;
@@ -40,6 +28,13 @@ export type Person = {
 
 	newsletter: boolean;
 	offers: boolean;
+};
+
+export type ContactUsPerson = {
+	name: string;
+	email: string;
+	subject: string;
+	message: string;
 };
 
 export function createPerson(overrides: Partial<Person> = {}): Person {
@@ -88,4 +83,14 @@ export function createPerson(overrides: Partial<Person> = {}): Person {
 	};
 
 	return person;
+}
+
+export function createContactUsUser(overrides: Partial<ContactUsPerson> = {}): ContactUsPerson {
+	return {
+		name: faker.person.fullName(),
+		email: faker.internet.email(),
+		subject: faker.lorem.sentence(3),
+		message: faker.lorem.sentence(20),
+		...overrides,
+	};
 }

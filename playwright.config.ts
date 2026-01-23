@@ -23,9 +23,9 @@ export default defineConfig({
 	timeout: 45 * 1000,
 	use: {
 		baseURL: process.env.BASE_URL,
-		screenshot: 'only-on-failure',
-		video: 'retain-on-failure',
-		trace: 'retain-on-failure',
+		screenshot: 'on',
+		video: 'on',
+		trace: 'on',
 		testIdAttribute: 'data-qa',
 	},
 
@@ -38,6 +38,11 @@ export default defineConfig({
 			name: 'chromium',
 			use: { ...devices['Desktop Chrome'] },
 			dependencies: ['setup'],
+		},
+
+		{
+			name: 'localPage',
+			use: { ...devices['Desktop Chrome'] },
 		},
 	],
 });
