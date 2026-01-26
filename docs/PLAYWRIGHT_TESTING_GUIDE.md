@@ -5,20 +5,175 @@
 
 ## Table of Contents
 
-1. [Architecture Overview](#1-architecture-overview)
-2. [Test Structure Philosophy](#2-test-structure-philosophy)
-3. [Core Patterns](#3-core-patterns)
-4. [API Testing Principles](#4-api-testing-principles)
-5. [UI Testing Principles](#5-ui-testing-principles)
-6. [Data Management](#6-data-management)
-7. [Logging and Reporting](#7-logging-and-reporting)
-8. [Code Review Guidelines](#8-code-review-guidelines)
+1. [Spec File Standards](#1-spec-file-standards)
+2. [Architecture Overview](#2-architecture-overview)
+3. [Test Structure Philosophy](#3-test-structure-philosophy)
+4. [Core Patterns](#4-core-patterns)
+5. [API Testing Principles](#5-api-testing-principles)
+6. [UI Testing Principles](#6-ui-testing-principles)
+7. [Data Management](#7-data-management)
+8. [Logging and Reporting](#8-logging-and-reporting)
+9. [Code Review Guidelines](#9-code-review-guidelines)
+10. [Spec File Definition of Done](#10-spec-file-definition-of-done)
 
 ---
 
-## 1. Architecture Overview
+## 1. Spec File Standards
 
-### 1.1 Directory Structure
+### 1.1 Spec File Purpose and Boundaries
+
+A spec file should be:
+
+- **One feature area / endpoint family / user journey per file** — not "everything about checkout" in one mega spec
+- **Readable like requirements** — test names = user intent + expected result
+- **Deterministic** — minimal randomness; clear test data ownership (create → use → cleanup)
+- **Debuggable by default** — steps, attachments, and assertions that explain why it failed (trace/screenshots + good messages)
+
+**Hard rule: No business logic in specs.** Specs orchestrate; helpers/clients/page-objects implement.
+
+### 1.2 File Naming Convention
+
+Use consistent prefixes so CI can filter easily:
+
+| Type | Pattern | Example |
+|------|---------|---------|
+| UI/E2E | `*.ui.spec.ts` or `*.e2e.spec.ts` | `auth.login.ui.spec.ts` |
+| API | `*.api.spec.ts` | `orders.create.api.spec.ts` |
+| Contract/Schema | `*.contract.spec.ts` | `users.get.contract.spec.ts` |
+| Visual | `*.visual.spec.ts` | `dashboard.visual.spec.ts` |
+
+### 1.3 Structure Inside a Spec File
+
+Keep this order (always):
+
+```typescript
+// 1. Imports
+import { test } from '@fixtures/setup-fixture';
+import { expect } from '@fixtures/matchers';
+
+// 2. Test metadata (tags, links, ids, owner)
+test.describe('Feature Area', { tag: ['@smoke', '@api'] }, () => {
+
+  // 3. Shared setup via test.beforeEach/fixtures
+  test.beforeEach(async ({ api }) => {
+    // Setup code
+  });
+
+  // 4. Tests: happy path first, edge cases next, negative last
+  test('REQ-123 | Happy path scenario', async ({ api }) => {
+    // ...
+  });
+
+  test('REQ-124 | Edge case scenario', async ({ api }) => {
+    // ...
+  });
+
+  test('REQ-125 | Negative scenario - validation error', async ({ api }) => {
+    // ...
+  });
+});
+```
+
+### 1.4 Requirements Mapping (Traceability)
+
+Every test should carry at least one of:
+
+- **Requirement ID**: `REQ-123`
+- **Jira link/key**: `JIRA-456`
+- **API endpoint**: `GET /v1/orders/{id}`
+- **User story**: "As a user…"
+
+**Recommended title patterns:**
+
+```typescript
+// With requirement ID
+test('REQ-123 | Login | user can sign in with valid credentials', ...);
+
+// With API endpoint
+test('API | GET /orders/{id} | returns 200 for existing order', ...);
+
+// With test ID and endpoint
+test('#101 [POST] /api/v2/product/issue - 000: Creates a product code', ...);
+```
+
+### 1.5 Tagging and Execution Control
+
+Use tags for selection, stability, and audience:
+
+| Tag | Purpose |
+|-----|---------|
+| `@smoke` | Critical path tests, run on every PR |
+| `@regression` | Full test suite, run nightly |
+| `@critical` | Business-critical tests |
+| `@flaky` | Temporarily unstable (must have ticket) |
+| `@readonly` | API tests that don't mutate data |
+| `@ui`, `@api` | Test type classification |
+| `@prod-safe` | Safe to run against production |
+| `@non-prod` | Should not run against production |
+
+**Tag Execution Policy:**
+
+- `@smoke` must run on every PR
+- `@regression` runs nightly
+- `@flaky` excluded from gating pipelines (requires linked ticket for tracking)
+
+**Usage:**
+
+```typescript
+test.describe('Product Issue API', { tag: ['@api', '@smoke'] }, () => {
+  test('Creates product successfully', { tag: '@critical' }, async ({ api }) => {
+    // ...
+  });
+
+  test.skip('Flaky test - JIRA-789', { tag: '@flaky' }, async ({ api }) => {
+    // ...
+  });
+});
+```
+
+### 1.6 Step Discipline
+
+Every test should have steps that match the user journey / API flow:
+
+- **Arrange** (data/setup)
+- **Act** (actions/request)
+- **Assert** (checks)
+
+Use `test.step()` heavily, and wrap page-object/service methods with `@step()` decorator so they appear in HTML/trace reports.
+
+**Guidelines:**
+
+- **5–12 steps per test** is usually optimal
+- Don't step every micro-click — step at meaningful intent boundaries
+- Steps should answer "what happened" when viewing the report
+
+**Example:**
+
+```typescript
+test('Complete purchase flow', async ({ page }) => {
+  await test.step('Arrange: Navigate and setup', async () => {
+    await uiSteps.navigateToStorefront();
+    await uiSteps.acceptCookie();
+  });
+
+  await test.step('Act: Add product to cart and checkout', async () => {
+    await uiSteps.searchForProduct('Gift Card');
+    await uiSteps.selectProduct();
+    await uiSteps.addToCart();
+    await uiSteps.proceedToCheckout();
+  });
+
+  await test.step('Assert: Verify order confirmation', async () => {
+    await uiSteps.assertSuccessPage('50.00', 'Gift Card');
+  });
+});
+```
+
+---
+
+## 2. Architecture Overview
+
+### 2.1 Directory Structure
 
 ```
 project-root/
@@ -64,7 +219,7 @@ project-root/
             └── *.spec.ts
 ```
 
-### 1.2 Layer Responsibilities
+### 2.2 Layer Responsibilities
 
 **API Layer:**
 - Service classes encapsulate API endpoints
@@ -87,9 +242,9 @@ project-root/
 
 ---
 
-## 2. Test Structure Philosophy
+## 3. Test Structure Philosophy
 
-### 2.1 Three-Layer Architecture
+### 3.1 Three-Layer Architecture
 
 ```
 ┌─────────────────────────────────┐
@@ -108,7 +263,7 @@ project-root/
 └─────────────────────────────────┘
 ```
 
-### 2.2 Separation of Concerns
+### 3.2 Separation of Concerns
 
 **Tests Should:**
 - Define test scenarios and expected outcomes
@@ -140,9 +295,9 @@ project-root/
 
 ---
 
-## 3. Core Patterns
+## 4. Core Patterns
 
-### 3.1 Fixture-Based Dependency Injection
+### 4.1 Fixture-Based Dependency Injection
 
 **API Fixture Pattern:**
 
@@ -211,7 +366,7 @@ export const test = base.extend<UIFixtures>({
 });
 ```
 
-### 3.2 Fluent API Pattern (Chainable Interface)
+### 4.2 Fluent API Pattern (Chainable Interface)
 
 **Base API Service:**
 
@@ -312,7 +467,7 @@ const response = await this.setSignedRequest({
   .postRequest(200);
 ```
 
-### 3.3 Step Decorator Pattern
+### 4.3 Step Decorator Pattern
 
 **Decorator Implementation:**
 
@@ -382,9 +537,9 @@ export class GoodShopApiV2 extends APIService {
 
 ---
 
-## 4. API Testing Principles
+## 5. API Testing Principles
 
-### 4.1 Service Layer Pattern
+### 5.1 Service Layer Pattern
 
 **Main Service Class Structure:**
 
@@ -516,7 +671,7 @@ export class GoodShopApiV2 extends APIService {
 }
 ```
 
-### 4.2 Request Body Builder Pattern (Models)
+### 5.2 Request Body Builder Pattern (Models)
 
 **Model Structure:**
 
@@ -621,7 +776,7 @@ export function buildCheckBalanceCodeRequestBody(
 }
 ```
 
-### 4.3 Response Schema Validation (Zod)
+### 5.3 Response Schema Validation (Zod)
 
 **Base Response Schema:**
 
@@ -718,7 +873,7 @@ export function validateResponseSchema<T extends z.ZodTypeAny>(
 }
 ```
 
-### 4.4 Custom Matchers
+### 5.4 Custom Matchers
 
 **Matchers Implementation:**
 
@@ -786,7 +941,7 @@ export const expect = baseExpect.extend({
 });
 ```
 
-### 4.5 Business Logic Assertions
+### 5.5 Business Logic Assertions
 
 **Assertion Functions:**
 
@@ -856,7 +1011,7 @@ export function assertProductIssueSuccess(
 }
 ```
 
-### 4.6 Authentication & Context Management
+### 5.6 Authentication & Context Management
 
 **Signature-Based Authentication Pattern:**
 
@@ -904,7 +1059,7 @@ export type GetSignatureParams = {
    - Disabled tokens: `API_KEY_DISABLED` / `SECRET_DISABLED`
    - Mismatch testing: Override credentials in method calls
 
-### 4.7 Test Structure & Naming
+### 5.7 Test Structure & Naming
 
 **Test File Organization:**
 
@@ -1024,9 +1179,9 @@ test('#401 Order status polling until success', async ({ api }) => {
 
 ---
 
-## 5. UI Testing Principles
+## 6. UI Testing Principles
 
-### 5.1 Page Object Model (POM)
+### 6.1 Page Object Model (POM)
 
 **Base Page Pattern:**
 
@@ -1188,7 +1343,7 @@ export class ProductPage extends BasePage {
 }
 ```
 
-### 5.2 Locator Strategy & Best Practices
+### 6.2 Locator Strategy & Best Practices
 
 **Locator Priority Order:**
 
@@ -1260,7 +1415,7 @@ await this.productCard('Product A').click();
 await this.amountButton(50).click();
 ```
 
-### 5.3 Step Classes (Workflow Orchestration)
+### 6.3 Step Classes (Workflow Orchestration)
 
 **Step Class Structure:**
 
@@ -1499,7 +1654,7 @@ test.describe('Product Purchase Flow', () => {
 });
 ```
 
-### 5.4 Assertion Patterns
+### 6.4 Assertion Patterns
 
 **Soft vs. Hard Assertions:**
 
@@ -1577,7 +1732,7 @@ test('Verify order', async ({ uiSteps }) => {
 });
 ```
 
-### 5.5 Synchronization Best Practices
+### 6.5 Synchronization Best Practices
 
 **Waiting Patterns:**
 
@@ -1659,9 +1814,9 @@ async fillMessage(message: string): Promise<void> {
 
 ---
 
-## 6. Data Management
+## 7. Data Management
 
-### 6.1 Test Data Organization
+### 7.1 Test Data Organization
 
 **Common Product Data:**
 
@@ -1747,7 +1902,7 @@ export const InvalidData = {
 } as const;
 ```
 
-### 6.2 Data Generation Utilities
+### 7.2 Data Generation Utilities
 
 **Random Data Generator:**
 
@@ -1851,7 +2006,7 @@ export default class ArrayUtils {
 }
 ```
 
-### 6.3 Environment Configuration
+### 7.3 Environment Configuration
 
 **Environment Variable Access:**
 
@@ -1945,7 +2100,59 @@ SECRET=prod-secret
 
 ---
 
-**Test Metadata:**
+## 8. Logging and Reporting
+
+### 8.1 Reporting Requirements
+
+**Default Artifacts (Every Run):**
+
+| Artifact | When Generated | Purpose |
+|----------|----------------|---------|
+| HTML Report | Always | Engineering/QA analysis |
+| Trace | Retain on failure/retry | Debug failed tests in trace viewer |
+| Screenshot | On failure | Quick visual of failure state |
+| Video | On first retry (UI only) | Full flow context |
+
+**Reporter Mix by Audience:**
+
+| Audience | Reporter | Purpose |
+|----------|----------|---------|
+| CI Pipeline | `dot` or `line` | Fast progress feedback |
+| Engineering/QA | HTML + Allure | Detailed failure analysis |
+| Management | Summary notification | Counts + top failures + report link |
+
+**Playwright Config Example:**
+
+```typescript
+// playwright.config.ts
+reporter: [
+  ['list'],                                    // CI console output
+  ['html', { outputFolder: 'playwright-report' }],  // Engineering/QA
+  ['allure-playwright', { outputFolder: 'allure-results' }],
+],
+
+use: {
+  trace: 'retain-on-failure',      // Trace on failure for debugging
+  screenshot: 'only-on-failure',   // Screenshot on failure
+  video: 'retain-on-failure',      // Video on failure/retry
+},
+```
+
+### 8.2 Failure Evidence Bundle
+
+On failure, you should be able to answer these questions within 2 minutes:
+
+1. **What step failed?** → Steps in HTML report / trace viewer
+2. **What did the UI look like?** → Screenshot attachment
+3. **What were the network calls?** → Trace viewer network tab
+4. **What was expected vs actual?** → Assertion messages
+
+**This requires:**
+- Steps marked with `test.step()` or `@step()` decorator
+- Screenshot/trace config enabled
+- Meaningful assertion messages
+
+### 8.3 Test Metadata
 
 ```typescript
 import { test } from '@fixtures/setup-fixture';
@@ -1956,7 +2163,8 @@ test.describe('Product Purchase Flow', () => {
   });
 });
 ```
-**Custom Screenshot Handling:**
+
+### 8.4 Custom Screenshot Handling
 
 ```typescript
 // steps/ui-action-steps.ts
@@ -1987,7 +2195,7 @@ async captureErrorState(): Promise<void> {
 }
 ```
 
-### 7.4 API Request/Response Logging
+### 8.5 API Request/Response Logging
 
 **Request Logging:**
 
@@ -2045,9 +2253,9 @@ async issueProductWithLogging(requestBody): Promise<ProductIssueResponse> {
 
 ---
 
-## 8. Code Review Guidelines
+## 9. Code Review Guidelines
 
-### 8.1 API Test Review Checklist
+### 9.1 API Test Review Checklist
 
 **Service Layer:**
 - [ ] All public methods use `@step()` decorator
@@ -2089,7 +2297,7 @@ async issueProductWithLogging(requestBody): Promise<ProductIssueResponse> {
 - [ ] Test data is externalized (constants, models)
 - [ ] Tests are independent and can run in any order
 
-### 8.2 UI Test Review Checklist
+### 9.2 UI Test Review Checklist
 
 **Page Objects:**
 - [ ] Extends `BasePage`
@@ -2143,7 +2351,7 @@ async issueProductWithLogging(requestBody): Promise<ProductIssueResponse> {
 - [ ] Test data is externalized (JSON, constants)
 - [ ] Tests are independent and can run in parallel
 
-### 8.3 General Code Quality
+### 9.3 General Code Quality
 
 **Naming Conventions:**
 - [ ] Classes: PascalCase (`ProductPage`, `UIActionSteps`, `GoodShopApiV2`)
@@ -2187,6 +2395,80 @@ async issueProductWithLogging(requestBody): Promise<ProductIssueResponse> {
 - [ ] API errors include request/response details
 - [ ] Validation failures show schema errors
 - [ ] Proper use of try-catch only when necessary
+
+---
+
+## 10. Spec File Definition of Done
+
+A spec file is acceptable only when all the following criteria are met:
+
+### 10.1 Universal Requirements (UI + API)
+
+- [ ] **Test titles are requirement-like and uniquely identifiable** (IDs/tags included)
+- [ ] **Tests are step-marked** (Arrange/Act/Assert visible in reports)
+- [ ] **Assertions have meaningful messages** and are semantically chosen
+- [ ] **Tags allow CI selection** (`@smoke`, `@regression`, `@api`, `@ui`)
+- [ ] **No shared state leakage** between tests (parallel-safe or explicitly serial)
+- [ ] **File naming follows convention** (`*.ui.spec.ts`, `*.api.spec.ts`)
+- [ ] **Happy path → Edge cases → Negative tests** order in describe blocks
+
+### 10.2 UI Spec Requirements
+
+A UI spec is "done" when it includes:
+
+- [ ] **Stable locators** (role/text/testid strategy; no brittle CSS)
+- [ ] **Steps for navigation + key actions** (visible in trace viewer)
+- [ ] **Screenshot/trace path on failure** (via config)
+- [ ] **Assertions for state change** (UI visibility, text content)
+- [ ] **No hard sleeps** — only Playwright waiting patterns
+- [ ] **Optional but powerful:** Assert underlying API call outcome
+
+### 10.3 API Spec Requirements
+
+An API spec is "done" when it includes:
+
+- [ ] **Clear baseURL and auth** handled via fixtures (not repeated)
+- [ ] **Data strategy:** create/cleanup OR isolated readonly dataset
+- [ ] **Logging/attachments on failure:** request, response, headers (sanitized)
+- [ ] **Schema validation (Zod)** for 200/400/401 etc where applicable
+- [ ] **Negative tests that prove:**
+  - Auth/permissions enforcement
+  - Validation error responses
+  - Not-found behavior
+
+### 10.4 Assertion Policy
+
+| Test Type | Minimum Assertions |
+|-----------|-------------------|
+| API | Status + Schema (Zod) + Key business invariants |
+| UI | Element visibility + Text/state content |
+
+**Policy:** Schema-only tests miss logic bugs; invariant-only tests miss regressions in contract. Always validate both.
+
+### 10.5 Quick Checklist (Copy for PR Review)
+
+```markdown
+## Spec File Review Checklist
+
+### General
+- [ ] File follows naming convention (`*.ui.spec.ts` or `*.api.spec.ts`)
+- [ ] Test titles include requirement ID or endpoint
+- [ ] Tags present (`@smoke`/`@regression`/`@api`/`@ui`)
+- [ ] Tests ordered: happy path → edge cases → negative
+- [ ] Steps visible in reports (5-12 steps per test)
+- [ ] Assertions have custom messages
+
+### UI-Specific
+- [ ] Locators use semantic selectors (role, label, testid)
+- [ ] No `waitForTimeout()` or arbitrary delays
+- [ ] Screenshot/trace config enabled
+
+### API-Specific
+- [ ] Zod schema validation present
+- [ ] Request/response logged on failure
+- [ ] Auth handled via fixtures
+- [ ] Negative tests cover: auth, validation, not-found
+```
 
 ---
 
