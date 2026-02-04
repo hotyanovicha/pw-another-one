@@ -1,7 +1,7 @@
 ---
 title: 'Doc: fixture index'
 ---
-<SwmSnippet path="/src/ui/fixtures/index.ts" line="1">
+<SwmSnippet path="src/ui/fixtures/index.ts" line="1">
 
 ---
 
@@ -13,7 +13,7 @@ import type { BrowserContext } from '@playwright/test';
 import { PageManager } from '../pages/page-manager';
 import { createPerson, Person } from '@/utils/person.factory';
 import { AUTH_USER_COUNT } from '../../../playwright.config';
-
+//text
 type Fixtures = {
 	pages: PageManager;
 	userPages: PageManager;
