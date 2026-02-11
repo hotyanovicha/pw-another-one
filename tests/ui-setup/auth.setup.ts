@@ -14,7 +14,7 @@ for (let i = 0; i < WORKERS_COUNT; i++) {
 		await page.goto('/login');
 		await pages.consentDialog.acceptIfVisible();
 		await pages.loginSignupPage.login(user.email, user.password);
-		await pages.header.isLoaded();
+		await pages.header.waitForLoad();
 
 		await page.context().storageState({
 			path: `.auth/user-${i}.json`,

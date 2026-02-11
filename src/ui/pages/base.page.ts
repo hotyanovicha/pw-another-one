@@ -24,7 +24,7 @@ export abstract class BasePage {
 	}
 
 	@step()
-	async clickBack(): Promise<void> {
+	async goBack(): Promise<void> {
 		await this.page.goBack();
 	}
 }

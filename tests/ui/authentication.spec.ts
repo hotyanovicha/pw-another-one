@@ -22,7 +22,7 @@ test('Authentication: User Registration with complete profile', { tag: '@P1' }, 
 	await pages.accountCreatedPage.waitForLoad();
 
 	await pages.accountCreatedPage.clickContinueButton();
-	await pages.header.isLoaded();
+	await pages.header.waitForLoad();
 	await pages.header.assertUserName(user.name);
 });
 
@@ -57,7 +57,7 @@ test('Authentication: User can re-login from checkout modal', { tag: '@P1' }, as
 	await newUser.cart.waitForLoad();
 	await newUser.cart.clickProceedCheckout();
 
-	await newUser.checkoutModal.isLoaded();
+	await newUser.checkoutModal.waitForLoad();
 	await newUser.checkoutModal.openRegisterLink();
 	await newUser.loginSignupPage.waitForLoad();
 

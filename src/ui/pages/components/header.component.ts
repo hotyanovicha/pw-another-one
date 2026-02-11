@@ -9,7 +9,7 @@ export class HeaderComponent {
 	constructor(private page: Page) {}
 
 	@step()
-	async isLoaded(): Promise<this> {
+	async waitForLoad(): Promise<this> {
 		await expect(this.homeLink).toBeVisible();
 		return this;
 	}

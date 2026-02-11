@@ -14,7 +14,7 @@ test('Search products by keywords', { tag: '@P1' }, async ({ pages }) => {
 	await pages.product.waitForLoad();
 	await pages.product.assertProductInfo(firstProduct);
 
-	await pages.product.clickBack();
+	await pages.product.goBack();
 	await pages.products.assertSearchExist();
 	await pages.products.searchProduct('Jeans');
 	await pages.products.assertSearchResults('Jeans');

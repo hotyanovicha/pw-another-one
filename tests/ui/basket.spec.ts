@@ -16,7 +16,7 @@ test(
 		const firstProduct = await newUser.product.getProductInfo();
 		await newUser.product.addToCart(3);
 		await newUser.cartModal.continueShopping();
-		await newUser.product.clickBack();
+		await newUser.product.goBack();
 		await newUser.products.openProductPage();
 		await newUser.product.waitForLoad();
 		const secondProduct = await newUser.product.getProductInfo();

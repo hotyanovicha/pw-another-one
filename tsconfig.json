@@ -21,8 +21,7 @@
       "@/ui/test-data/*": ["src/ui/test-data/*"],
       "@/ui/types/*": ["src/ui/types/*"],
       "@/ui/test-data/constants/*": ["src/ui/test-data/constants/*"],
-      "@/ui/api-fixtures/*": ["src/ui/api-fixtures/*"],
-      "@/ui/models/*": ["src/ui/models/*"]
+      "@/ui/api-fixtures/*": ["src/ui/api-fixtures/*"]
     }
   },
   "include": ["tests/**/*.ts", "playwright.config.ts", "src/**/*.ts"],

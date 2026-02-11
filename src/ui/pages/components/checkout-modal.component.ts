@@ -7,7 +7,7 @@ export class CheckoutModal {
 	constructor(private page: Page) {}
 
 	@step()
-	async isLoaded(): Promise<this> {
+	async waitForLoad(): Promise<this> {
 		await expect(this.registerLink).toBeVisible();
 		return this;
 	}

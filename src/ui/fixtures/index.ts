@@ -47,7 +47,7 @@ export const test = base.extend<Fixtures>({
 		await newUser.signupPage.clickCreateAccountButton();
 		await newUser.accountCreatedPage.waitForLoad();
 		await newUser.accountCreatedPage.clickContinueButton();
-		await newUser.header.isLoaded();
+		await newUser.header.waitForLoad();
 		await newUser.header.assertUserName(person.name);
 		await use({ newUser, person });
 		await context.close();
