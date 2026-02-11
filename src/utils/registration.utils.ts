@@ -1,5 +1,5 @@
+import { RegistrationFormData } from '@/ui/types/registration-form.types';
 import { Person } from './person.factory';
-import { RegistrationFormData } from '@/ui/models/registration-form.model';
 
 export function createRegistrationFormData(person: Person): RegistrationFormData {
 	return {

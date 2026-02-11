@@ -104,13 +104,29 @@ Red flags to catch:
 - Component that should be in `components/` but is nested in a page folder
 - Test file not following `.spec.ts` convention
 - Mixed concerns in one folder (pages + utils + types together)
-- Missing explicit return types on functions
+- Missing explicit return types on exported functions (non-exported local/private arrow functions may omit return types when the type is obvious from context)
 
 **Naming Conventions:**
 - [ ] **Variables/methods follow conventions** - camelCase, descriptive, no abbreviations
 - [ ] **File names are consistent** - kebab-case, clear purpose
 - [ ] **Declarative Naming** - follow `should [outcome] when [scenario]` pattern
 - [ ] **Constants are UPPER_CASE** - configuration values, magic numbers extracted
+- [ ] **Page Object method names match their return type and intent:**
+
+  | Prefix | Return type | Purpose | Example |
+  |--------|------------|---------|---------|
+  | `waitFor*` | `Promise<this>` | Wait for a condition, enable chaining | `waitForLoad(): Promise<this>` |
+  | `expect*` | `Promise<void>` | Thin Playwright `expect` wrapper (single assertion) | `expectUrl(url: string): Promise<void>` |
+  | `assert*` | `Promise<void>` | Custom business-logic assertion (may combine multiple checks) | `assertCartTotal(expected: number): Promise<void>` |
+  | `is*` / `has*` | `Promise<boolean>` | Query state, **must return boolean** | `isSubmitEnabled(): Promise<boolean>` |
+  | `get*` | `Promise<string \| number \| …>` | Extract a value from the page | `getHeaderText(): Promise<string>` |
+  | verb (action) | `Promise<void>` | Describe **user intent**, not mechanism | `goBack(): Promise<void>`, `fillEmail(v: string): Promise<void>` |
+
+  Red flags to catch:
+  - `is*` method that returns `Promise<this>` or `Promise<void>` instead of `Promise<boolean>` (e.g., `isLoaded(): Promise<this>` — should be `waitForLoad()`)
+  - `click*` method name — describes mechanism, not intent (e.g., `clickBack()` should be `goBack()`)
+  - `assert*` for a thin Playwright wrapper — use `expect*` prefix instead (e.g., `assertUrl()` → `expectUrl()`)
+  - Ambiguous names like `check*` — unclear whether it asserts or returns a boolean
 
 **Over-Engineering:**
 - [ ] **No premature abstraction** - don't create utilities for single use
@@ -122,7 +138,7 @@ Red flags to catch:
 **Method Optimization:**
 - [ ] **Methods do one thing** - single responsibility
 - [ ] **No duplicate logic** - DRY principle applied where it makes sense
-- [ ] **Explicit return types** - all functions must have explicit return types (e.g., `Promise<void>`, `string`, `number`)
+- [ ] **Explicit return types on exported functions** - all exported/public functions must have explicit return types (e.g., `Promise<void>`, `string`, `number`). Non-exported local arrow functions may omit return types when obvious from context.
 - [ ] **Strict Type Safety** - NO 'any' type, use generics/unknown
 - [ ] **Async/await used correctly** - no unnecessary awaits, proper error handling
 
@@ -254,6 +270,9 @@ Red flags to catch:
 - Consider CI/CD: "Will this work reliably in pipeline?"
 - Assess risk: "What could this break? What's not covered?"
 - **DO NOT include "Test Coverage Analysis" section** - this will be handled by a separate agent
+
+**Patterns to IGNORE (not issues):**
+- Duplicate fixture definitions across different fixture files (e.g., `pages` in both `fixtures/index.ts` and `api-fixtures/api-user.fixture.ts`) — these may coexist intentionally for A/B performance comparison between fixture strategies. Do not flag as duplication or suggest `mergeTests` unless the duplicates have diverged in behavior.
 
 **Patterns to flag for extra review (not issues, just note them):**
 - Public locators used for assertion flexibility

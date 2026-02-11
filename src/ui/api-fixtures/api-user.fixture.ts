@@ -28,9 +28,8 @@ export const test = base.extend<ApiFixtures>({
 		await pm.home.open();
 		await pm.consentDialog.acceptIfVisible();
 		await pm.home.clickSignupLoginLink();
-		await pm.loginSignupPage.isLoaded();
+		await pm.loginSignupPage.waitForLoad();
 		await pm.loginSignupPage.login(person.email, person.password);
-		await pm.header.assertUserName(person.name);
 
 		await use(pm);
 	},

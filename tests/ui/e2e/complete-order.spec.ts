@@ -5,7 +5,7 @@ test('E2E: New User: Complete order with valid card', { tag: '@P1' }, async ({ n
 	const { newUser, person } = newUserPages;
 
 	await newUser.products.open();
-	await newUser.products.isLoaded();
+	await newUser.products.waitForLoad();
 
 	const firstProduct = await newUser.products.selectProduct(0);
 	await newUser.products.addToCart(firstProduct.index);
@@ -22,13 +22,13 @@ test('E2E: New User: Complete order with valid card', { tag: '@P1' }, async ({ n
 	await newUser.cart.validateCartItems(expectedCartItems);
 
 	await newUser.cart.clickProceedCheckout();
-	await newUser.checkout.isLoaded();
+	await newUser.checkout.waitForLoad();
 	await newUser.checkout.assertAddress(person);
 	const cartTotal = await newUser.checkout.validateCartItems(expectedCartItems);
 	await newUser.checkout.assertCartTotal(cartTotal);
 	await newUser.checkout.clickPlaceOrder();
 
-	await newUser.payment.isLoaded();
+	await newUser.payment.waitForLoad();
 	await newUser.payment.enterCreditCard(CREDIT_CARDS.valid, person);
 	await newUser.payment.clickPayConfirm();
 
@@ -37,8 +37,8 @@ test('E2E: New User: Complete order with valid card', { tag: '@P1' }, async ({ n
 	await newUser.payment.assertInvoiceValid(invoice, { customer: person, amount: cartTotal });
 
 	await newUser.payment.clickContinue();
-	await newUser.home.isLoaded();
+	await newUser.home.waitForLoad();
 	await newUser.header.openCartPage();
-	await newUser.cart.isLoaded();
+	await newUser.cart.waitForLoad();
 	await newUser.cart.assertCartEmpty();
 });

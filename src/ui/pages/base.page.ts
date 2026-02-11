@@ -13,7 +13,7 @@ export abstract class BasePage {
 	}
 
 	@step()
-	async isLoaded(): Promise<this> {
+	async waitForLoad(): Promise<this> {
 		await expect(this.uniqueElement).toBeVisible();
 		return this;
 	}
@@ -26,10 +26,5 @@ export abstract class BasePage {
 	@step()
 	async clickBack(): Promise<void> {
 		await this.page.goBack();
-	}
-
-	@step()
-	async assertElementVisible(locator: Locator): Promise<void> {
-		await expect(locator).toBeVisible();
 	}
 }
