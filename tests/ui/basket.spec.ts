@@ -9,20 +9,20 @@ test(
 		const { newUser } = newUserPages;
 
 		await newUser.products.open();
-		await newUser.products.isLoaded();
+		await newUser.products.waitForLoad();
 		await newUser.products.assertProductsExist();
 		await newUser.products.openProductPage(0);
-		await newUser.product.isLoaded();
+		await newUser.product.waitForLoad();
 		const firstProduct = await newUser.product.getProductInfo();
 		await newUser.product.addToCart(3);
 		await newUser.cartModal.continueShopping();
-		await newUser.product.clickBack();
+		await newUser.product.goBack();
 		await newUser.products.openProductPage();
-		await newUser.product.isLoaded();
+		await newUser.product.waitForLoad();
 		const secondProduct = await newUser.product.getProductInfo();
 		await newUser.product.addToCart(1);
 		await newUser.cartModal.openCart();
-		await newUser.cart.isLoaded();
+		await newUser.cart.waitForLoad();
 		await newUser.cart.validateCartItems([
 			{ name: firstProduct.name, price: firstProduct.price, quantity: 3 },
 			{ name: secondProduct.name, price: secondProduct.price, quantity: 1 },
@@ -40,7 +40,7 @@ test.describe('Basket', () => {
 		cartWithProducts = newUser;
 
 		await newUser.products.open();
-		await newUser.products.isLoaded();
+		await newUser.products.waitForLoad();
 		firstProduct = await newUser.products.selectProduct(0);
 		await newUser.products.addToCart(firstProduct.index);
 		await newUser.cartModal.continueShopping();
@@ -49,7 +49,7 @@ test.describe('Basket', () => {
 		await newUser.cartModal.continueShopping();
 
 		await newUser.cart.open();
-		await newUser.cart.isLoaded();
+		await newUser.cart.waitForLoad();
 
 		await newUser.cart.validateCartItems([
 			{ name: firstProduct.name, price: firstProduct.price, quantity: 1 },
@@ -70,24 +70,24 @@ test('User can update product quantities in cart', { tag: '@P2' }, async ({ newU
 	const { newUser } = newUserPages;
 
 	await newUser.products.open();
-	await newUser.products.isLoaded();
+	await newUser.products.waitForLoad();
 	const firstProduct = await newUser.products.selectProduct();
 	await newUser.products.openProductPage(firstProduct.index);
-	await newUser.product.isLoaded();
+	await newUser.product.waitForLoad();
 	await newUser.product.addToCart(2);
 	await newUser.cartModal.openCart();
-	await newUser.cart.isLoaded();
+	await newUser.cart.waitForLoad();
 
 	await newUser.cart.validateCartItems([{ name: firstProduct.name, price: firstProduct.price, quantity: 2 }]);
 
 	await newUser.products.open();
-	await newUser.products.isLoaded();
+	await newUser.products.waitForLoad();
 	await newUser.products.selectProduct(firstProduct.index);
 	await newUser.products.openProductPage(firstProduct.index);
-	await newUser.product.isLoaded();
+	await newUser.product.waitForLoad();
 	await newUser.product.addToCart(3);
 	await newUser.cartModal.openCart();
-	await newUser.cart.isLoaded();
+	await newUser.cart.waitForLoad();
 
 	await newUser.cart.validateCartItems([{ name: firstProduct.name, price: firstProduct.price, quantity: 5 }]);
 });

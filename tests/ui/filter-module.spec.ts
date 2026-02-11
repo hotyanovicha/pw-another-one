@@ -4,7 +4,7 @@ import { CATEGORIES, CATEGORY_PRODUCTS } from '@/ui/test-data/constants/categori
 
 test('Filter products by categories and brands', { tag: '@P1' }, async ({ pages }) => {
 	await pages.home.open();
-	await pages.home.isLoaded();
+	await pages.home.waitForLoad();
 
 	await pages.categoryComponent.assertCategoryPanelExists();
 	await pages.categoryComponent.verifyCategoriesAndOptions(CATEGORY_PRODUCTS);

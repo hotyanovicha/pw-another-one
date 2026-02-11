@@ -25,8 +25,8 @@ export class SignupPage extends BasePage {
 	private readonly createAccountButton = this.page.getByRole('button', { name: 'Create Account' });
 
 	@step()
-	async isLoaded(): Promise<this> {
-		await super.isLoaded();
+	async waitForLoad(): Promise<this> {
+		await super.waitForLoad();
 		await expect.soft(this.uniqueElement.getByRole('heading', { name: 'Enter Account Information' })).toBeVisible();
 		return this;
 	}

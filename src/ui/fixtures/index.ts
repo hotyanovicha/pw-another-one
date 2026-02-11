@@ -1,9 +1,8 @@
 import { test as base } from '@playwright/test';
-import type { BrowserContext } from '@playwright/test';
 import { PageManager } from '../pages/page-manager';
 import { createPerson, Person } from '@/utils/person.factory';
-import { AUTH_USER_COUNT } from '../../../playwright.config';
-//text
+import { blockGoogleAds } from '@/utils/filter-network.utils';
+
 type Fixtures = {
 	pages: PageManager;
 	userPages: PageManager;
@@ -17,7 +16,8 @@ export const test = base.extend<Fixtures>({
 	},
 
 	userPages: async ({ browser }, use, testInfo) => {
-		const userIndex = testInfo.workerIndex % AUTH_USER_COUNT;
+		const workerCount = Number(process.env.WORKERS_COUNT ?? 1);
+		const userIndex = testInfo.workerIndex % workerCount;
 		const storageState = `.auth/user-${userIndex}.json`;
 		const context = await browser.newContext({ storageState });
 		await blockGoogleAds(context);
@@ -38,16 +38,16 @@ export const test = base.extend<Fixtures>({
 		await newUser.home.open();
 		await newUser.consentDialog.acceptIfVisible();
 		await newUser.home.clickSignupLoginLink();
-		await newUser.loginSignupPage.isLoaded();
+		await newUser.loginSignupPage.waitForLoad();
 		await newUser.loginSignupPage.enterNameAndEmail(person.name, person.email);
 		await newUser.loginSignupPage.clickSignupButton();
 		await newUser.loginSignupPage.assertUrl('/signup');
-		await newUser.signupPage.isLoaded();
+		await newUser.signupPage.waitForLoad();
 		await newUser.signupPage.fillForm(person);
 		await newUser.signupPage.clickCreateAccountButton();
-		await newUser.accountCreatedPage.isLoaded();
+		await newUser.accountCreatedPage.waitForLoad();
 		await newUser.accountCreatedPage.clickContinueButton();
-		await newUser.header.isLoaded();
+		await newUser.header.waitForLoad();
 		await newUser.header.assertUserName(person.name);
 		await use({ newUser, person });
 		await context.close();
@@ -55,22 +55,3 @@ export const test = base.extend<Fixtures>({
 });
 
 export { expect } from '@playwright/test';
-
-export async function blockGoogleAds(context: BrowserContext): Promise<void> {
-	await context.route('**/*', (route) => {
-		const url = route.request().url();
-
-		let host = '';
-		try {
-			host = new URL(url).hostname;
-		} catch {
-			return route.continue();
-		}
-
-		if (host === 'googlesyndication.com' || host.endsWith('.googlesyndication.com')) {
-			return route.abort();
-		}
-
-		return route.continue();
-	});
-}
