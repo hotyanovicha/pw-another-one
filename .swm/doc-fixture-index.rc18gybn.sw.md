@@ -48,16 +48,16 @@ export const test = base.extend<Fixtures>({
 		await newUser.home.open();
 		await newUser.consentDialog.acceptIfVisible();
 		await newUser.home.clickSignupLoginLink();
-		await newUser.loginSignupPage.isLoaded();
+		await newUser.loginSignupPage.waitForLoad();
 		await newUser.loginSignupPage.enterNameAndEmail(person.name, person.email);
 		await newUser.loginSignupPage.clickSignupButton();
 		await newUser.loginSignupPage.assertUrl('/signup');
-		await newUser.signupPage.isLoaded();
+		await newUser.signupPage.waitForLoad();
 		await newUser.signupPage.fillForm(person);
 		await newUser.signupPage.clickCreateAccountButton();
-		await newUser.accountCreatedPage.isLoaded();
+		await newUser.accountCreatedPage.waitForLoad();
 		await newUser.accountCreatedPage.clickContinueButton();
-		await newUser.header.isLoaded();
+		await newUser.header.waitForLoad();
 		await newUser.header.assertUserName(person.name);
 		await use({ newUser, person });
 		await context.close();
@@ -65,7 +65,6 @@ export const test = base.extend<Fixtures>({
 });
 
 export { expect } from '@playwright/test';
-
 ```
 
 ---
