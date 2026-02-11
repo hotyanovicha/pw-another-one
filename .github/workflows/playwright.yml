@@ -76,7 +76,7 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             # Set project flag
             if [ "${{ inputs.project }}" = "all" ]; then
-              TEST_ARGS=""
+              TEST_ARGS="--project=chromium-ui --project=chromium-api"
             else
               TEST_ARGS="--project=${{ inputs.project }}"
             fi
@@ -95,7 +95,7 @@ jobs:
             esac
           else
             # Default to all projects for push events
-            TEST_ARGS=""
+            TEST_ARGS="--project=chromium-ui --project=chromium-api"
           fi
 
           pnpm exec playwright test $TEST_ARGS
