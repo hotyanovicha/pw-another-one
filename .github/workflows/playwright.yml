@@ -1,6 +1,6 @@
 name: pw
 run-name: >
-  ${{ github.workflow }} :: run #${{ github.run_number }} :: ${{ inputs.project || 'chromium' }} :: ${{ inputs.priority || 'all' }}
+  ${{ github.workflow }} :: run #${{ github.run_number }} :: ${{ inputs.project || 'all' }} :: ${{ inputs.priority || 'all' }}
 on:
   push:
     branches: [main]
@@ -9,11 +9,12 @@ on:
       project:
         description: 'Project'
         required: false
-        default: 'chromium'
+        default: 'all'
         type: choice
         options:
-          - chromium
           - all
+          - chromium-ui
+          - chromium-api
       priority:
         description: 'Priority'
         required: false
@@ -73,9 +74,9 @@ jobs:
           TEST_ARGS=""
 
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            # Set project flag (chromium by default, or all non-setup projects)
+            # Set project flag
             if [ "${{ inputs.project }}" = "all" ]; then
-              TEST_ARGS="--project=chromium"
+              TEST_ARGS=""
             else
               TEST_ARGS="--project=${{ inputs.project }}"
             fi
@@ -93,8 +94,8 @@ jobs:
                 ;;
             esac
           else
-            # Default to chromium project for push events
-            TEST_ARGS="--project=chromium"
+            # Default to all projects for push events
+            TEST_ARGS=""
           fi
 
           pnpm exec playwright test $TEST_ARGS
