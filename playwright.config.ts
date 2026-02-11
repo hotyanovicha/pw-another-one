@@ -11,14 +11,12 @@ dotenvExpand.expand(
 	})
 );
 
-export const AUTH_USER_COUNT = 5;
-
 export default defineConfig({
 	testDir: './tests',
 	fullyParallel: true,
 	forbidOnly: !!process.env.CI,
 	retries: process.env.CI ? 1 : 0,
-	workers: process.env.CI ? 5 : undefined,
+	workers: process.env.WORKERS_COUNT ? Number(process.env.WORKERS_COUNT) : undefined,
 	reporter: process.env.CI ? [['list'], ['html']] : 'list',
 	timeout: 45 * 1000,
 	use: {
@@ -32,12 +30,20 @@ export default defineConfig({
 	projects: [
 		{
 			name: 'setup',
+			testDir: './tests/ui-setup',
 			testMatch: /.*\.setup\.ts/,
 		},
 		{
-			name: 'chromium',
+			name: 'chromium-ui',
+			testDir: './tests/ui',
 			use: { ...devices['Desktop Chrome'] },
 			dependencies: ['setup'],
+		},
+		{
+			name: 'chromium-api',
+			testDir: './tests/ui-api',
+			use: { ...devices['Desktop Chrome'] },
+			dependencies: [],
 		},
 	],
 });

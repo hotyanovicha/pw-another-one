@@ -2,7 +2,7 @@ import { test as base } from '@playwright/test';
 import type { BrowserContext } from '@playwright/test';
 import { PageManager } from '../pages/page-manager';
 import { createPerson, Person } from '@/utils/person.factory';
-import { AUTH_USER_COUNT } from '../../../playwright.config';
+
 //text
 type Fixtures = {
 	pages: PageManager;
@@ -17,7 +17,8 @@ export const test = base.extend<Fixtures>({
 	},
 
 	userPages: async ({ browser }, use, testInfo) => {
-		const userIndex = testInfo.workerIndex % AUTH_USER_COUNT;
+		const workerCount = Number(process.env.WORKERS_COUNT ?? 1);
+		const userIndex = testInfo.workerIndex % workerCount;
 		const storageState = `.auth/user-${userIndex}.json`;
 		const context = await browser.newContext({ storageState });
 		await blockGoogleAds(context);
