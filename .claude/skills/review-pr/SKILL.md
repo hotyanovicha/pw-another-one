@@ -104,7 +104,7 @@ Red flags to catch:
 - Component that should be in `components/` but is nested in a page folder
 - Test file not following `.spec.ts` convention
 - Mixed concerns in one folder (pages + utils + types together)
-- Explicit `Promise<void>`, `Promise<primitive>`, or `Promise<SimpleObject>` return types (TS inference is preferred)
+- Missing explicit return types on functions
 
 **Naming Conventions:**
 - [ ] **Variables/methods follow conventions** - camelCase, descriptive, no abbreviations
@@ -122,9 +122,8 @@ Red flags to catch:
 **Method Optimization:**
 - [ ] **Methods do one thing** - single responsibility
 - [ ] **No duplicate logic** - DRY principle applied where it makes sense
-- [ ] **Proper return types** - TypeScript types are useful (but avoid redundancy like `Promise<void>`)
+- [ ] **Explicit return types** - all functions must have explicit return types (e.g., `Promise<void>`, `string`, `number`)
 - [ ] **Strict Type Safety** - NO 'any' type, use generics/unknown
-- [ ] **Let TypeScript infer Promise types** - Avoid explicit `Promise<void>` or types for primitives/simple objects. Only use explicit types for complex interfaces or when inference fails.
 - [ ] **Async/await used correctly** - no unnecessary awaits, proper error handling
 
 **Code Style:**

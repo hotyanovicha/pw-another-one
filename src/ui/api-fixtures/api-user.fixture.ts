@@ -1,9 +1,9 @@
 import { test as base } from '@playwright/test';
-import type { BrowserContext } from '@playwright/test';
 import { PageManager } from '@/ui/pages/page-manager';
 import { createPerson } from '@/utils/person.factory';
 import { API_ENDPOINTS } from '@/ui/test-data/constants/api.constants';
 import { createRegistrationFormData } from '@/utils/registration.utils';
+import { blockGoogleAds } from '@/utils/filter-network.utils';
 
 type ApiFixtures = {
 	pages: PageManager;
@@ -37,22 +37,3 @@ export const test = base.extend<ApiFixtures>({
 });
 
 export { expect } from '@playwright/test';
-
-export async function blockGoogleAds(context: BrowserContext): Promise<void> {
-	await context.route('**/*', (route) => {
-		const url = route.request().url();
-
-		let host = '';
-		try {
-			host = new URL(url).hostname;
-		} catch {
-			return route.continue();
-		}
-
-		if (host === 'googlesyndication.com' || host.endsWith('.googlesyndication.com')) {
-			return route.abort();
-		}
-
-		return route.continue();
-	});
-}
