@@ -9,11 +9,10 @@ doc updated.
 
 ```typescript
 import { test as base } from '@playwright/test';
-import type { BrowserContext } from '@playwright/test';
 import { PageManager } from '../pages/page-manager';
 import { createPerson, Person } from '@/utils/person.factory';
+import { blockGoogleAds } from '@/utils/filter-network.utils';
 
-//text
 type Fixtures = {
 	pages: PageManager;
 	userPages: PageManager;
@@ -67,24 +66,6 @@ export const test = base.extend<Fixtures>({
 
 export { expect } from '@playwright/test';
 
-export async function blockGoogleAds(context: BrowserContext): Promise<void> {
-	await context.route('**/*', (route) => {
-		const url = route.request().url();
-
-		let host = '';
-		try {
-			host = new URL(url).hostname;
-		} catch {
-			return route.continue();
-		}
-
-		if (host === 'googlesyndication.com' || host.endsWith('.googlesyndication.com')) {
-			return route.abort();
-		}
-
-		return route.continue();
-	});
-}
 ```
 
 ---
