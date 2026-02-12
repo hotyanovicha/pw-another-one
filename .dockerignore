@@ -1,0 +1,9 @@
+node_modules/
+test-results/
+playwright-report/
+.git/
+.github/
+.husky/
+*.md
+.env*
+.DS_Store

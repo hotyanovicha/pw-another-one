@@ -1,0 +1,13 @@
+services:
+  playwright-tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - CI=true
+      - ENV_NAME=${ENV_NAME:-dev}
+      - BASE_URL=${BASE_URL:-https://www.automationexercise.com}
+      - WORKERS_COUNT=${WORKERS_COUNT:-5}
+    volumes:
+      - ./test-results:/app/test-results
+      - ./playwright-report:/app/playwright-report
