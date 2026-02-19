@@ -1,0 +1,28 @@
+# Playwright LLM Guidelines
+
+When writing or modifying Playwright test automation code in this repository, you must adhere to the following rules:
+
+1. **Never use `page.waitForTimeout(ms)`**. It leads to flaky tests and slow execution.
+   - Example (Bad): `await page.waitForTimeout(5000)`
+   - Example (Good): `await expect(page.locator('.loading-spinner')).toBeHidden()`
+
+2. **Locators Priority:**
+   - 1st: `getByRole` (e.g., `await page.getByRole('button', { name: 'Submit' })`)
+   - 2nd: `getByText`
+   - 3rd: `getByTestId`
+   - Only use CSS/XPath if the above are insufficient.
+
+3. **Page Object Models:**
+   - Do not leak Playwright locators or assertions into the `test()` block. 
+   - Define private locators as getters in classes extending `BasePage`.
+   - Expose intent-driven methods (e.g., `login(user, pass)`) to the test layer.
+
+4. **Async/Await:**
+   - Ensure you `await` all assertions (e.g., `await expect(...)`). If an assertion is missing `await`, it will silently pass.
+   - Return promises properly in helper methods if chaining.
+
+5. **Soft Assertions for State:**
+   - Use `expect.soft()` to validate multiple discrete UI elements (labels, headers, table columns) so that all failures are logged instead of failing on the first one.
+
+6. **Context Awareness:**
+   - Always refer to `ARCHITECTURE.md` and `docs/design-docs/core-beliefs.md` for our structural standard.

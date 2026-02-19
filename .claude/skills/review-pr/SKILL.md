@@ -340,4 +340,4 @@ EOF
 **Important:** Do not ask the user if they want to post - automatically post the review after completing the analysis.
 
 ## Reference
-See `.claude/testing-principles.md` for detailed testing standards.
+See `docs/design-docs/core-beliefs.md` for detailed testing standards.
